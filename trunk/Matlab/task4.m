@@ -1,7 +1,7 @@
 clc;
 SIZE=201;
 ez=zeros(1,SIZE);
-hy=zeros(1,SIZE);
+hy=zeros(1,SIZE-1);
 
 % Medium Specifications
 mu=[1.2566e-006*ones(1,SIZE)];   %permeability of free sapce
@@ -33,8 +33,7 @@ ezm1q=0;
             ez(mm) = ez(mm) + (hy(mm) - hy(mm - 1)) * (delt/(delx*epsilon(mm))) ;
         end
 %         Source node (hard coded)
-%         ez(2) = ez(2)+exp(-(qTime - 30) * (qTime - 30) / 100.); %additive
-        ez(2) = exp(-(qTime - 30) * (qTime - 30) / 100.);
+        ez(2) = ez(2)+exp(-(qTime - 30) * (qTime - 30) / 100.); %additive Source
 %         Absorbing Boundary Conditions
         ez(1)=ez2q+(ez(2)-ez1q)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
         ez(SIZE)=ezm1q+(ez(SIZE-1)-ezmq)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
@@ -54,7 +53,7 @@ ezm1q=0;
         line([SIZE-80 SIZE-80],[-1.2 1.2],'Color','Red') % Medium slab line
         line([SIZE-60 SIZE-60],[-1.2 1.2],'Color','Red') % Medium slab line
         subplot(2,1,2);
-        plot(1:SIZE,hy);
+        plot(1:SIZE-1,hy);
         title('Magnetic Component');
         xlim([0 SIZE]);
         ylim([-0.005 0.005]);
