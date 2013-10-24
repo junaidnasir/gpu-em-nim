@@ -10,9 +10,10 @@ epsilon=[8.8542e-012*ones(1,SIZE-80) 1.7708e-011*ones(1,20) 8.8542e-012*ones(1,6
 
 % Courant Number (Accuracy) Sc
 % ideal Condition --> Sc= c*delt/delx = 1
-delt=1;
-delx=299792458;
-% delx=1000;
+% f=3Ghz, lambda=c/f=0.1m, for 4 wavelengths, dx=0.4/(maxtime=1000)
+% so dt=dx/c=1.333e-12
+delt=1.333e-12;
+delx=4e-4;
 Sc=299792458*delt/delx;
 epsilonr=1;
 mur=1;
@@ -34,8 +35,7 @@ ezm1q=0;
             ez(mm) = ez(mm) + (hy(mm) - hy(mm - 1)) * (delt/(delx*epsilon(mm))) ;
         end
 %         Source node (hard coded)
-%         ez(2) = ez(2)+exp(-(qTime - 30) * (qTime - 30) / 100.); %additive Source
-        ez(2) = ez(2)+ sin(2*pi*(qTime-30)*3000000)
+        ez(2) = ez(2)+ (sin(2*pi*(qTime)*3000000*delt)*Sc);
 %         Absorbing Boundary Conditions
         ez(1)=ez2q+(ez(2)-ez1q)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
         ez(SIZE)=ezm1q+(ez(SIZE-1)-ezmq)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
@@ -59,7 +59,7 @@ ezm1q=0;
 %         title('Magnetic Component');
 %         xlim([0 SIZE]);
 %         ylim([-0.005 0.005]);
-%         line([SIZE-80 SIZE-80],[-0.005 0.005],'Color','Red') % Medium slab line
-%         line([SIZE-60 SIZE-60],[-0.005 0.005],'Color','Red') % Medium slab line
+        line([SIZE-80 SIZE-80],[-0.000000005 0.000000005],'Color','Red') % Medium slab line
+        line([SIZE-60 SIZE-60],[-0.000000005 0.000000005],'Color','Red') % Medium slab line
         pause(0.02);
     end
