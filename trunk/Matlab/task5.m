@@ -1,13 +1,13 @@
 clc;
 SIZE=1001;
-maxTime = 10001;
+maxTime = 5001;
 
 %Constants
 c=299792458;
 % Medium Specifications
 mu=[1.2566e-006*ones(1,SIZE)];   %permeability of free sapce
 % epsilon=[8.8542e-012*ones(1,SIZE)]; %permittivity of free space 
-epsilon=[8.8542e-012*ones(1,SIZE-80) 1.7708e-011*ones(1,20) 8.8542e-012*ones(1,60)]; %introducing medium of 2*e with a width of 20
+epsilon=[8.8542e-012*ones(1,SIZE-180) 1.7708e-011*ones(1,120) 8.8542e-012*ones(1,160)]; %introducing medium of 2*e with a width of 20
 
 % Courant Number (Accuracy) Sc
 % ideal Condition --> Sc= c*delt/delx = 1
@@ -41,7 +41,7 @@ ezm1q=0;
             ez(mm) = ez(mm) + (hy(mm) - hy(mm - 1)) * (delt/(delx*epsilon(mm))) ;
         end
 %         Source node (hard coded)
-        ez(2) = ez(2)+ (sin(2*pi*(qTime)*c*delt)*Sc);
+        ez(2) = ez(2)+ (sin(2*pi*(qTime)*f*delt)*Sc);
 %         Absorbing Boundary Conditions
         ez(1)=ez2q+(ez(2)-ez1q)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
         ez(SIZE)=ezm1q+(ez(SIZE-1)-ezmq)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
@@ -58,14 +58,14 @@ ezm1q=0;
         title('Electirc Component');
         xlim([0 SIZE]);
         ylim([-1.2 1.2]);
-        line([SIZE-80 SIZE-80],[-1.2 1.2],'Color','Red') % Medium slab line
-        line([SIZE-60 SIZE-60],[-1.2 1.2],'Color','Red') % Medium slab line
+        line([SIZE-180 SIZE-180],[-1.2 1.2],'Color','Red') % Medium slab line
+        line([SIZE-160 SIZE-160],[-1.2 1.2],'Color','Red') % Medium slab line
         subplot(2,1,2);
         plot(1:SIZE-1,hy);
         title('Magnetic Component');
         xlim([0 SIZE]);
         ylim([-0.005 0.005]);
-        line([SIZE-80 SIZE-80],[-0.005 0.005],'Color','Red') % Medium slab line
-        line([SIZE-60 SIZE-60],[-0.005 0.005],'Color','Red') % Medium slab line
+        line([SIZE-180 SIZE-180],[-0.005 0.005],'Color','Red') % Medium slab line
+        line([SIZE-160 SIZE-160],[-0.005 0.005],'Color','Red') % Medium slab line
 %         pause(0.02);
     end
