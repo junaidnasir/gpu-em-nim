@@ -48,7 +48,7 @@ for medium= 1:2
         for mm = 2:(SIZE-1)
             ez(mm) = ez(mm) + (hy(mm) - hy(mm - 1)) * (delt/(delx*epsilon(mm))) ;
         end
-        Etemp(qTime)= ez(SIZE-499);
+        Etemp(qTime)= ez(SIZE-498);
 %         Source node (hard coded)
         ez(2) = ez(2)+ (sin(2*pi*(qTime)*f*delt)*Sc);
 %         Absorbing Boundary Conditions
@@ -97,4 +97,4 @@ FEincident=fft(Eincident);
 FEtransmitted=fft(Etransmitted);
 cTransmitted=FEtransmitted/FEincident
 cReflected=1-cTransmitted
-TheroticaLcReflected=(2-1)/(2+1)
+TheroticaLcReflected=(1.7708e-011-8.8542e-012)/(1.7708e-011+8.8542e-012)
