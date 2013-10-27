@@ -108,14 +108,14 @@ f = Fs/2*linspace(0,1,NFFT/2+1);
 % Plot single-sided amplitude spectrum.
 figure(3);
 subplot(2,1,1);
-stem(f,2*abs(FEincident(1:NFFT/2+1))) 
+plot(f,2*abs(FEincident(1:NFFT/2+1))) 
 xlim([0 5e9]);
 ylim([0 0.5]);
 title('Single-Sided Amplitude Spectrum of Incident Wave')
 xlabel('Frequency (Hz)')
 ylabel('|Eincident(f)|')
 subplot(2,1,2);
-stem(f,2*abs(FEtransmitted(1:NFFT/2+1)))
+plot(f,2*abs(FEtransmitted(1:NFFT/2+1)))
 if SourceSelect==0;
 xlim([0 5e9]);
 ylim([0 0.5]);
@@ -126,4 +126,6 @@ ylabel('|Etransmitted(f)|')
 
 cTransmitted=FEtransmitted/FEincident
 cReflected=1-cTransmitted
-TheroticaLcReflected=(1.7708e-011-8.8542e-012)/(1.7708e-011+8.8542e-012)
+eta1=sqrt(1.2566e-006/8.8542e-012);
+eta2=sqrt(1.2566e-006/1.7708e-011);
+Gamma=(eta2-eta1)/(eta2+eta1)
