@@ -1,7 +1,6 @@
 clc;
 SIZE=1001;
 maxTime = 5001;
-SourceSelect=1; % 0=Sinosoidal, 1=Gauassian
 %Constants
 c=3e8;
 
@@ -47,12 +46,8 @@ for medium= 1:2
             ez(mm) = ez(mm) + (hy(mm) - hy(mm - 1)) * (delt/(delx*epsilon(mm))) ;
         end
         Etemp(qTime)= ez(SIZE-498);
-        if SourceSelect==0
 %         Source node (hard coded)
             ez(2) = ez(2)+ (sin(2*pi*(qTime)*f*delt)*Sc);
-        else
-            ez(2) = ez(2)+exp(-(qTime - 30) * (qTime - 30) / 100.);
-        end
 %         Absorbing Boundary Conditions
         ez(1)=ez2q+(ez(2)-ez1q)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
         ez(SIZE)=ezm1q+(ez(SIZE-1)-ezmq)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
@@ -116,10 +111,8 @@ xlabel('Frequency (Hz)')
 ylabel('|Eincident(f)|')
 subplot(2,1,2);
 stem(f,2*abs(FEtransmitted(1:NFFT/2+1)))
-if SourceSelect==0;
 xlim([0 5e9]);
 ylim([0 0.5]);
-end
 title('Single-Sided Amplitude Spectrum of Transmitted Wave')
 xlabel('Frequency (Hz)')
 ylabel('|Etransmitted(f)|')
