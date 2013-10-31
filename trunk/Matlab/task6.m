@@ -126,6 +126,6 @@ ylabel('|Etransmitted(f)|')
 
 cTransmitted=FEtransmitted/FEincident
 cReflected=1-cTransmitted
-eta1=sqrt(1.2566e-006/8.8542e-012);
-eta2=sqrt(1.2566e-006/1.7708e-011);
+eta1=sqrt(1/);
+eta2=sqrt(2/1);
 Gamma=(eta2-eta1)/(eta2+eta1)
