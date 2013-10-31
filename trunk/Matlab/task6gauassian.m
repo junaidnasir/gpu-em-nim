@@ -116,4 +116,7 @@ ylabel('|Etransmitted(f)|')
 
 cTransmitted=FEtransmitted/FEincident
 cReflected=1-cTransmitted
-TheroticaLcReflected=(1.7708e-011-8.8542e-012)/(1.7708e-011+8.8542e-012)
+eta1=sqrt(1/);
+eta2=sqrt(2/1);
+Gamma=(eta2-eta1)/(eta2+eta1)
+
