@@ -1,14 +1,21 @@
+
 clc;
 SIZE=1001;
-maxTime = 5001;
+maxTime = 1001;
 SourceSelect=1; % 0=Sinosoidal, 1=Gauassian
+if (SourceSelect==0)
+    maxTime = 5001;
+end
 %Constants
 c=3e8;
 
 % Courant Number (Accuracy) Sc
 % ideal Condition --> Sc= c*delt/delx = 1
 % f=3Ghz, lambda=c/f=0.1m, for 4 wavelengths, dx=0.4/(maxtime=1000)
+PulseWidth=800;
 f=3e9;
+w=2*pi*f;    % omega
+k0=w/c     ; % free space wave number constant
 lambda=c/f;
 delx=(4*lambda)/SIZE;
 % so dt=dx/c=1.333e-12
@@ -16,6 +23,7 @@ delt=delx/c;
 Sc=c*delt/delx;
 epsilonr=1;
 mur=1;
+
 
 % Incident and Refelected Waves Variables
 Eincident=0;
@@ -46,12 +54,12 @@ for medium= 1:2
         for mm = 2:(SIZE-1)
             ez(mm) = ez(mm) + (hy(mm) - hy(mm - 1)) * (delt/(delx*epsilon(mm))) ;
         end
-        Etemp(qTime)= ez(SIZE-498);
+        Etemp(qTime)= ez(SIZE-498); %just after boundary of medium
         if SourceSelect==0
 %         Source node (hard coded)
             ez(2) = ez(2)+ (sin(2*pi*(qTime)*f*delt)*Sc);
         else
-            ez(2) = ez(2)+exp(-(qTime - 30) * (qTime - 30) / 100.);
+            ez(2) = ez(2)+exp(-(qTime - 30) * (qTime - 30) / (PulseWidth./4));
         end
 %         Absorbing Boundary Conditions
         ez(1)=ez2q+(ez(2)-ez1q)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
@@ -62,23 +70,23 @@ for medium= 1:2
         ezmq=ez(SIZE);
         ezm1q=ez(SIZE-1);
 %         Plotting
-        figure(1);
-        subplot(2,1,1);
-        plot(1:SIZE,ez);
-        title('Electirc Component');
-        xlim([0 SIZE]);
-        ylim([-1.2 1.2]);
-        if medium==2
-            line([SIZE-500 SIZE-500],[-1.2 1.2],'Color','Red') % Medium slab line
-        end
-        subplot(2,1,2);
-        plot(1:SIZE-1,hy);
-        title('Magnetic Component');
-        xlim([0 SIZE]);
-        ylim([-0.005 0.005]);
-        if medium==2
-        line([SIZE-500 SIZE-500],[-0.005 0.005],'Color','Red') % Medium slab line
-        end
+%         figure(1);
+%         subplot(2,1,1);
+%         plot(1:SIZE,ez);
+%         title('Electirc Component');
+%         xlim([0 SIZE]);
+%         ylim([-1.2 1.2]);
+%         if medium==2
+%             line([SIZE-500 SIZE-500],[-1.2 1.2],'Color','Red') % Medium slab line
+%         end
+%         subplot(2,1,2);
+%         plot(1:SIZE-1,hy);
+%         title('Magnetic Component');
+%         xlim([0 SIZE]);
+%         ylim([-0.005 0.005]);
+%         if medium==2
+%         line([SIZE-500 SIZE-500],[-0.005 0.005],'Color','Red') % Medium slab line
+%         end
     end
     if medium==1
         Eincident=Etemp;
@@ -109,17 +117,15 @@ f = Fs/2*linspace(0,1,NFFT/2+1);
 figure(3);
 subplot(2,1,1);
 plot(f,2*abs(FEincident(1:NFFT/2+1))) 
-xlim([0 5e9]);
-ylim([0 0.5]);
+xlim([0 1e11]);
+% ylim([0 0.5]);
 title('Single-Sided Amplitude Spectrum of Incident Wave')
 xlabel('Frequency (Hz)')
 ylabel('|Eincident(f)|')
 subplot(2,1,2);
 plot(f,2*abs(FEtransmitted(1:NFFT/2+1)))
-if SourceSelect==0;
-xlim([0 5e9]);
-ylim([0 0.5]);
-end
+xlim([0 1e11]);
+% ylim([0 0.5]);
 title('Single-Sided Amplitude Spectrum of Transmitted Wave')
 xlabel('Frequency (Hz)')
 ylabel('|Etransmitted(f)|')
@@ -129,3 +135,7 @@ cReflected=1-cTransmitted
 eta1=sqrt(1/1);
 eta2=sqrt(2/1);
 Gamma=(eta2-eta1)/(eta2+eta1)
+
+
+% eq 33
+ReferectiveIndex=(1/(k0*(760-750)*i))*log(FEtransmitted(760)/FEtransmitted(750))
