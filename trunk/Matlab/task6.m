@@ -160,5 +160,7 @@ plot(f(1:fspan), real(nFDTD(1:fspan)));
 title('Refractive index re(n)');
 xlabel('Frequency (Hz)');
 ylabel('re(n)');
+line([3e9 3e9],[-15 1.415],'Color','Red')
+line([0e9 3e9],[1.415 1.415],'Color','Red')
 
 % ReferectiveIndex=(1/(k0*(760-750)*i))*log(FEtransmitted(760)/FEtransmitted(750))
