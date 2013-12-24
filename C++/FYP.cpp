@@ -1,7 +1,7 @@
 # include<iostream>
 # include<cmath>
 using namespace std;
-const int pi = 3.14;
+const float pi = 3.14;
 void main()
 {
 	int SIZE=1001;
@@ -40,9 +40,9 @@ void main()
 
 	int **Etemp;
 	Etemp = new int* [1] ; //1 x maxtime
-		Etemp[0] = new int [maxTime];
-		for(int j=0; j<maxTime; j++)
-			Etemp[0][j] = 0;
+	Etemp[0] = new int [maxTime];
+	for(int j=0; j<maxTime; j++)
+		Etemp[0][j] = 0;
 
 	// refractive index variables
 	int Z1 = 750;
@@ -61,29 +61,37 @@ void main()
 	for (int i=0; i<maxTime ; i++)
 		Exz2[i] = 0;
 	
+	float **mu;
+	mu = new float* [1] ; //1 x maxtime
+	for (int i=0; i<1 ; i++)
+		mu[i] = new float [SIZE];
+	for(int j=0; j<SIZE; j++)
+			mu[0][j] = 1.2566e-006;
+
+	float **epsilon;
+	epsilon = new float* [1] ; //1 x maxtime
+	epsilon[0] = new float [SIZE];
+
+	float **ez;
+	ez = new float* [1] ; //1 x maxtime
+	for (int i=0; i<1 ; i++)
+		ez[i] = new float [SIZE];
+	for(int j=0; j<SIZE; j++)
+		ez[0][j] = 0;
+
+	//hy=zeros(1,SIZE-1);
+	float **hy;
+	hy = new float* [1] ; //1 x maxtime
+	for (int i=0; i<1 ; i++)
+		hy[i] = new float [SIZE-1];
+	for(int j=0; j<SIZE-1; j++)
+		hy[0][j] = 0;
+	
 	for (int medium=1; medium<=2; medium++)
 	{
     // Temp Variable
     //ez=zeros(1,SIZE);
-		float **ez;
-		ez = new float* [1] ; //1 x maxtime
-		for (int i=0; i<1 ; i++)
-			ez[i] = new float [SIZE];
-		for (int i=0; i<1 ; i++)
-		{
-			for(int j=0; j<SIZE; j++)
-				ez[i][j] = 0;
-		}
-		//hy=zeros(1,SIZE-1);
-		float **hy;
-		hy = new float* [1] ; //1 x maxtime
-		for (int i=0; i<1 ; i++)
-			hy[i] = new float [SIZE-1];
-		for (int i=0; i<1 ; i++)
-		{
-			for(int j=0; j<SIZE-1; j++)
-				hy[i][j] = 0;
-		}
+		
 		int mm = 0;
 		int ez1q = 0;
 		int ez2q = 0;
@@ -91,17 +99,7 @@ void main()
 		int ezm1q = 0;
 		// Medium Specifications
 		//mu=1.2566e-006*ones(1,SIZE);   %permeability of free sapce
-		float **mu;
-		mu = new float* [1] ; //1 x maxtime
-		for (int i=0; i<1 ; i++)
-			mu[i] = new float [SIZE];
-		for(int j=0; j<SIZE; j++)
-				mu[0][j] = 1.2566e-006;
-
-		float **epsilon;
-		epsilon = new float* [1] ; //1 x maxtime
-		epsilon[0] = new float [SIZE];
-
+		
 		if (medium==1)
 		{
 			//epsilon=8.8542e-012*ones(1,SIZE); // free space
@@ -161,7 +159,40 @@ void main()
 			Eincident = Etemp;
 		else
 			Etransmitted = Etemp;
-	}
+
+	} //end medium loop
+
+	// -------- Memory Deallocaion -----------
+	/*
+	for(int i=0; i<1;i++)
+		delete []Eincident[i];
+	delete[] Eincident;
+
+	for(int i=0; i<1;i++)
+		delete [] Etransmitted[i];
+	delete[] Etransmitted;
+
+	for(int i=0; i<1;i++)
+		delete []  Etemp[i];
+	delete[] Etemp;
 	
-	
+	for(int i=0; i<1;i++)
+		delete  []mu[i];
+	delete[] mu;
+
+	for(int i=0; i<1;i++)
+		delete  []epsilon[i];
+	delete[] epsilon;
+
+	for(int i=0; i<1;i++)
+		delete  []ez[i];
+	delete[] ez;
+
+	for(int i=0; i<1;i++)
+		delete [] hy[i];
+	delete[] hy;
+	*/
+	delete[] Exz1;
+
+	delete[] Exz2;
 }
