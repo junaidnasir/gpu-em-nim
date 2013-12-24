@@ -26,23 +26,17 @@ void main()
 	int epsilonr = 1;
 	int mur = 1;
     // Incident and Refelected Waves Variables
-	int **Eincident;
-	Eincident = new int* [1] ; //1 x maxtime
-	Eincident[0] = new int [maxTime];
+	int *Eincident = new int[maxTime] ; //1 x maxtime
 	for(int j=0; j<maxTime; j++)
-		Eincident[0][j] = 0;
+		Eincident[j] = 0;
 	
-	int **Etransmitted;
-	Etransmitted = new int* [1] ; //1 x maxtime
-	Etransmitted[0] = new int [maxTime];
+	int *Etransmitted = new int [maxTime] ; //1 x maxtime
 	for(int j=0; j<maxTime; j++)
-		Etransmitted[0][j] = 0;
+		Etransmitted[j] = 0;
 
-	int **Etemp;
-	Etemp = new int* [1] ; //1 x maxtime
-	Etemp[0] = new int [maxTime];
+	int *Etemp = new int [maxTime];
 	for(int j=0; j<maxTime; j++)
-		Etemp[0][j] = 0;
+		Etemp[j] = 0;
 
 	// refractive index variables
 	int Z1 = 750;
@@ -61,37 +55,25 @@ void main()
 	for (int i=0; i<maxTime ; i++)
 		Exz2[i] = 0;
 	
-	float **mu;
-	mu = new float* [1] ; //1 x maxtime
-	for (int i=0; i<1 ; i++)
-		mu[i] = new float [SIZE];
+	float *mu = new float [SIZE];
 	for(int j=0; j<SIZE; j++)
-			mu[0][j] = 1.2566e-006;
+			mu[j] = 1.2566e-006;
 
-	float **epsilon;
-	epsilon = new float* [1] ; //1 x maxtime
-	epsilon[0] = new float [SIZE];
+	float *epsilon = new float [SIZE];
 
-	float **ez;
-	ez = new float* [1] ; //1 x maxtime
-	for (int i=0; i<1 ; i++)
-		ez[i] = new float [SIZE];
+	float *ez = new float [SIZE];
 	for(int j=0; j<SIZE; j++)
-		ez[0][j] = 0;
+		ez[j] = 0;
 
 	//hy=zeros(1,SIZE-1);
-	float **hy;
-	hy = new float* [1] ; //1 x maxtime
-	for (int i=0; i<1 ; i++)
-		hy[i] = new float [SIZE-1];
+	float *hy = new float [SIZE-1];
 	for(int j=0; j<SIZE-1; j++)
-		hy[0][j] = 0;
+		hy[j] = 0;
 	
 	for (int medium=1; medium<=2; medium++)
 	{
     // Temp Variable
     //ez=zeros(1,SIZE);
-		
 		int mm = 0;
 		int ez1q = 0;
 		int ez2q = 0;
@@ -104,16 +86,16 @@ void main()
 		{
 			//epsilon=8.8542e-012*ones(1,SIZE); // free space
 			for(int j=0; j<SIZE; j++)
-				epsilon[0][j] = 8.8542e-012;
+				epsilon[j] = 8.8542e-012;
 		}
 		else
 		{
 			//epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; // half medium
 			int j;
 			for(j=0; j<SIZE-500; j++)
-				epsilon[0][j] = 8.8542e-012;
+				epsilon[j] = 8.8542e-012;
 			for(int k=j ;k<SIZE ;k++)
-				epsilon[0][j] = 1.7708e-011;
+				epsilon[j] = 1.7708e-011;
 
 		}
 		for (int qTime=0; qTime<(maxTime-1); qTime++)
@@ -123,75 +105,67 @@ void main()
 			//hy(mm) = hy(mm) + (ez(mm + 1) - ez(mm)) * (delt/(delx*mu(mm)));
 			for(int nn=0; nn<(SIZE-1); nn++)
 			{
-				hy[0][nn] = hy[0][nn] + (ez[0][nn+1] - ez[0][nn]) * (delt/(delt*mu[0][nn]));
+				hy[nn] = hy[nn] + (ez[nn+1] - ez[nn]) * (delt/(delt*mu[nn]));
 			}
 			//         Update Electrical filed
 	        
 			//ez(mm) = ez(mm) + (hy(mm) - hy(mm - 1)) * (delt/(delx*epsilon(mm))) ;
 			for(int nn=1; nn<(SIZE-1); nn++)
 			{
-				ez[0][nn] = ez[0][nn] + (hy[0][nn] - hy[0][nn-1]) * (delt/(delt*epsilon[0][nn]));
+				ez[nn] = ez[nn] + (hy[nn] - hy[nn-1]) * (delt/(delt*epsilon[nn]));
 			}
 			
-	        Etemp[0][qTime]= ez[0][SIZE-498]; //just after boundary of medium
+	        Etemp[qTime]= ez[SIZE-498]; //just after boundary of medium
 	        if (SourceSelect==0)
 			//        Source node (hard coded)
-			    ez[0][1] = ez[0][1] + (sin(2*pi*(qTime+1)*f*delt)*Sc);
+			    ez[1] = ez[1] + (sin(2*pi*(qTime+1)*f*delt)*Sc);
 			else
-			    ez[0][1] = ez[0][1] + exp(-(qTime+1 - 30) * (qTime+1 - 30) / (PulseWidth/4));
+			    ez[1] = ez[1] + exp(-(qTime+1 - 30) * (qTime+1 - 30) / (PulseWidth/4));
 			
 		    //         Absorbing Boundary Conditions
 			 //ez(1)=ez2q+(ez(2)-ez1q)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
-	        ez[0][0] = ez2q+(ez[0][1]-ez1q)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );
+	        ez[0] = ez2q+(ez[1]-ez1q)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );
 			//ez(SIZE)=ezm1q+(ez(SIZE-1)-ezmq)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
-	        ez[0][SIZE-1] = ezm1q+(ez[0][SIZE-1-1]-ezmq)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );
+	        ez[SIZE-1] = ezm1q+(ez[SIZE-1-1]-ezmq)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );
 		    //         Saving q-1 (pervious step time values) for boundary Conditions
-			ez2q = ez[0][1]; //ez2q=ez(2);
-			ez1q = ez[0][0]; //ez1q=ez(1);
-			ezmq = ez[0][SIZE-1]; //ezmq=ez(SIZE);
-			ezm1q= ez[0][SIZE-2]; //ezm1q=ez(SIZE-1);
-			Exz1[qTime] = ez[0][Z1-1]; //   Exz1(qTime)=ez(Z1);
-	        Exz2[qTime] = ez[0][Z2-1];
+			ez2q = ez[1]; //ez2q=ez(2);
+			ez1q = ez[0]; //ez1q=ez(1);
+			ezmq = ez[SIZE-1]; //ezmq=ez(SIZE);
+			ezm1q= ez[SIZE-2]; //ezm1q=ez(SIZE-1);
+			Exz1[qTime] = ez[Z1-1]; //   Exz1(qTime)=ez(Z1);
+	        Exz2[qTime] = ez[Z2-1];
 	        //snapshot code here
 		} //end qTime
 
 		if (medium==1)
-			Eincident = Etemp;
+		{
+			for(int i=0;i<maxTime;i++)
+			Eincident[i] = Etemp[i];
+		}
 		else
-			Etransmitted = Etemp;
-
+		{
+			for(int i=0;i<maxTime;i++)
+			Etransmitted[i] = Etemp[i];
+		}
+		
 	} //end medium loop
 
 	// -------- Memory Deallocaion -----------
-	/*
-	for(int i=0; i<1;i++)
-		delete []Eincident[i];
+	
 	delete[] Eincident;
 
-	for(int i=0; i<1;i++)
-		delete [] Etransmitted[i];
 	delete[] Etransmitted;
 
-	for(int i=0; i<1;i++)
-		delete []  Etemp[i];
 	delete[] Etemp;
 	
-	for(int i=0; i<1;i++)
-		delete  []mu[i];
 	delete[] mu;
 
-	for(int i=0; i<1;i++)
-		delete  []epsilon[i];
 	delete[] epsilon;
 
-	for(int i=0; i<1;i++)
-		delete  []ez[i];
 	delete[] ez;
 
-	for(int i=0; i<1;i++)
-		delete [] hy[i];
 	delete[] hy;
-	*/
+	
 	delete[] Exz1;
 
 	delete[] Exz2;
