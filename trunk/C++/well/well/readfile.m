@@ -1,5 +1,5 @@
 
-fidp = fopen('Eincident','r','l');
+fidp = fopen('Efield2_299.jd','r','l');
 if fidp==-1
     a=1;
     return
