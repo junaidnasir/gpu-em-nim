@@ -19,7 +19,7 @@ k0=w/c     ; % free space wave number constant
 lambda=c/f;
 delx=(4*lambda)/SIZE;
 % so dt=dx/c=1.333e-12
-delt=delx/c;
+delt=delx/c
 Sc=c*delt/delx;
 epsilonr=1;
 mur=1;

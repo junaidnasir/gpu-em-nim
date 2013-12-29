@@ -124,9 +124,9 @@ void main()
 			}
 
 			if (SourceSelect==0)															//Source node
-			    ez[1] = ez[1] + (sin(2*pi*(qTime+1)*f*delt)*Sc);
+			    ez[1] = ez[1] + (sin(2*pi*(qTime)*f*delt)*Sc);
 			else
-			    ez[1] = ez[1] + exp((-(qTime+1 - 30) * (qTime+1 - 30)) / (PulseWidth/4));
+			    ez[1] = ez[1] + exp((-(qTime+1 - 30) * (qTime - 30)) / (PulseWidth/4));
 
 	        Etemp[qTime]= ez[SIZE-498]; 													//Save ez after boundary
 		    
@@ -182,6 +182,40 @@ void main()
 	snapshot.write((char *)&Etransmitted[mm],(sizeof(double)));
 	snapshot.close();
 
+	stream.str(std::string());
+	stream<<"./results/"<<"Exz1"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename, ios::out|ios::binary);
+	for (int mm = 0; mm < SIZE; mm++)
+	snapshot.write((char *)&Exz1[mm],(sizeof(double)));
+	snapshot.close();
+
+	stream.str(std::string());
+	stream<<"./results/"<<"Exz2"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename, ios::out|ios::binary);
+	for (int mm = 0; mm < SIZE; mm++)
+	snapshot.write((char *)&Exz2[mm],(sizeof(double)));
+	snapshot.close();
+
+	stream.str(std::string());
+	stream<<"./results/"<<"maxTime"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename, ios::out|ios::binary);
+	snapshot.write((char *)&maxTime,(sizeof(int)));
+	snapshot.close();
+
+	stream.str(std::string());
+	stream<<"./results/"<<"data"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename, ios::out|ios::binary);
+	snapshot.write((char *)&delt,(sizeof(double)));
+	snapshot.write((char *)&k0,(sizeof(double)));
+	snapshot.write((char *)&z1,(sizeof(double)));
+	snapshot.write((char *)&z2,(sizeof(double)));
+	snapshot.close();
+
+	cout<<endl;
 	cout<<"Enter anything to exit"<<endl;
 	cin>>SourceSelect;
 
