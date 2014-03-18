@@ -13,3 +13,9 @@ __kernel void OpenCLTemplateKernel(__global PRECISION *input, __global PRECISION
 
 	output[i] = Multiplier * input[i];
 }
+__kernel/*keyword as it is*/ void arrkernal2(__global PRECISION *arr)
+{
+	unsigned int i = get_global_id(0);
+
+	arr[i] = pow(arr[i],2.);
+}

@@ -16,15 +16,15 @@ private:
 	// Host data arrays.
 	PRECISION* input;
 	PRECISION* output;
-	PRECISION* arr[32];
+	PRECISION* arr;
 
 	// Scalar.
-	const PRECISION Multiplier;
+	const PRECISION Multiplier; //variables here----------
 
 	// Device data arrays.
 	cl_mem d_input;
 	cl_mem d_output;
-	cl_mem d_arr[32];
+	cl_mem d_arr; //buffer in gpu
 	// ============ OPENCL related parameters ===========
 	// OPENCL context/device/program
 	cl_context context;
@@ -32,6 +32,7 @@ private:
 	cl_command_queue commandQueue;
 	cl_program program;
 	cl_kernel kernel;
+	cl_kernel kernel2;
 	// ==================================================
 
 	// Timer variables.
