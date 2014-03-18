@@ -21,7 +21,7 @@ int COpenCLTemplate::AllocateMemoryCPU()
 {
 	input = new PRECISION[Width];
 	output = new PRECISION[Width];
-
+	arr = new PRECISION[32];  //memory allocation
 	return 0;
 }
 // Initialise CPU data.
@@ -29,7 +29,8 @@ int COpenCLTemplate::InitialiseCPU()
 {
 	for (unsigned int i=0; i<Width; i++)
 		input[i] = 0.;
-
+	for (unsigned int i=0; i<32; i++)
+		arr[i] = i; // . = double value
 	return 0;
 }
 int COpenCLTemplate::InitialiseCL()
@@ -183,7 +184,10 @@ int COpenCLTemplate::AllocateMemoryGPU()
 
 	d_output = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*Width, output, &status);
 	SafeCall(status, "Error: clCreateBuffer() cannot create output buffer");
-
+	
+	d_arr = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*32, arr/*cpu input array*/, &status);
+	SafeCall(status, "Error: clCreateBuffer() cannot create arr buffer");
+	
 	return 0;
 }
 int COpenCLTemplate::InitialiseCLKernelsGPU()
@@ -230,11 +234,18 @@ int COpenCLTemplate::InitialiseCLKernelsGPU()
 	// Attach kernel objects to respective kernel functions.
 	kernel = clCreateKernel(program, "OpenCLTemplateKernel", &status);
 	SafeCall(status, "Error: Creating Kernel from program. (clCreateKernel)");
-
+	
+	kernel2 = clCreateKernel(program, "arrkernal2", &status);
+	SafeCall(status, "Error: Creating Kernel from program. (clCreateKerne2)");
+	
+	
 	// ====== Set appropriate arguments to the kernel ======
 	SafeCall(clSetKernelArg(kernel, 0, sizeof(cl_mem), (void*)&d_input), "Error: Setting kernel argument 'input'");
 	SafeCall(clSetKernelArg(kernel, 1, sizeof(cl_mem), (void*)&d_output), "Error: Setting kernel argument 'output'");
 	SafeCall(clSetKernelArg(kernel, 2, sizeof(PRECISION), (void*)&Multiplier), "Error: Setting kernel argument 'Multiplier'");
+	
+	SafeCall(clSetKernelArg(kernel2, 0/*1st argument*/, sizeof(cl_mem)/*buffer*/, (void*)&d_arr), "Error: Setting kernel argument 'input'");
+	
 
 	return 0;
 }
@@ -303,8 +314,39 @@ int COpenCLTemplate::RunCLKernels()
 
 	cout << "Kernel run complete!" << endl;
 	cout << "Kernel execution time = " << kernelExecTimeNsT/1e6 << "sec (" << kernelExecTimeNsT/1e3 << "ms or " << kernelExecTimeNsT << "us)" << endl;
-	SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
+	//SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
+	///////////////////////////--------------
+	globalThreads[0] = 32;
+	globalThreads[1] = 1;
+	localThreads[0]  = 32;
+	localThreads[1]  = 1;
 
+	// Enqueue a kernel call.
+	status = clEnqueueNDRangeKernel(commandQueue, kernel2, 2, NULL, globalThreads, localThreads, 0, NULL, &events[0]);
+	if(status != CL_SUCCESS) 
+	{ 
+		cout << "Error: Enqueueing kernel onto command queue (clEnqueueNDRangeKernel)" << endl;
+		if ( status == CL_INVALID_COMMAND_QUEUE ) cout << "CL_INVALID_COMMAND_QUEUE." << endl;
+		if ( status == CL_INVALID_PROGRAM_EXECUTABLE ) cout << "CL_INVALID_PROGRAM_EXECUTABLE." << endl;
+		if ( status == CL_INVALID_KERNEL ) cout << "CL_INVALID_KERNEL." << endl;
+		if ( status == CL_INVALID_WORK_DIMENSION ) cout << "CL_INVALID_WORK_DIMENSION." << endl;
+		if ( status == CL_INVALID_CONTEXT ) cout << "CL_INVALID_CONTEXT." << endl;
+		if ( status == CL_INVALID_KERNEL_ARGS ) cout << "CL_INVALID_KERNEL_ARGS." << endl;
+		if ( status == CL_INVALID_WORK_GROUP_SIZE ) cout << "CL_INVALID_WORK_GROUP_SIZE." << endl;
+		if ( status == CL_INVALID_WORK_ITEM_SIZE ) cout << "CL_INVALID_WORK_ITEM_SIZE." << endl;
+		if ( status == CL_INVALID_GLOBAL_OFFSET ) cout << "CL_INVALID_GLOBAL_OFFSET." << endl;
+		return 1;
+	}
+
+	// Wait for the kernel call to finish execution.
+	SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
+	SafeCall(status = clEnqueueReadBuffer(commandQueue, d_arr, CL_TRUE, 0,  sizeof(PRECISION)*32, arr, 0, NULL, &events[1]),"Error: clEnqueueReadBuffer Failed.");
+	SafeCall(clWaitForEvents(1, &events[1]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
+	for (int i=0;i<32;i++)
+	{
+		cout<<arr[i]<<endl;
+	}
+	SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
 	return 0;
 }
 int COpenCLTemplate::CompleteRun()
