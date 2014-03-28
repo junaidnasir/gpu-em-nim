@@ -15,8 +15,8 @@ void main()
 	stream<<"results";
 	CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
 
-	int SIZE=1001;
-    int maxTime = 1001;
+	int SIZE=1000;
+    int maxTime = 1024;
 	int SourceSelect = 1; 			// 0=Sinosoidal, 1=Gauassian
 	cout<<"----Select Source----"<<endl;
 	cout<<"0)Sinosoidal 1) Gauassian"<<endl;
