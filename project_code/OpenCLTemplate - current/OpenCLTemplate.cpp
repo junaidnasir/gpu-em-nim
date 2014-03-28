@@ -8,9 +8,10 @@
 #include <cstring>
 #include <cstdlib>
 #include <string>
+//#include <windows.h>
 using namespace std;
 
-COpenCLTemplate::COpenCLTemplate(unsigned int pmaxTime, PRECISION pMultiplier): maxTime(pmaxTime), Multiplier(pMultiplier), input(NULL), output(NULL), tStart(0LL), tEnd(0LL), tDelta(0LL), tPaused(true)
+COpenCLTemplate::COpenCLTemplate(int maxTime, int SIZE): maxTime(maxTime), SIZE(SIZE), tStart(0LL), tEnd(0LL), tDelta(0LL), tPaused(true)
 {
 	// Printing simulation size.
 	cout << "Startin Up " << endl;
@@ -18,46 +19,54 @@ COpenCLTemplate::COpenCLTemplate(unsigned int pmaxTime, PRECISION pMultiplier): 
 // Allocate memory for data arrays.
 int COpenCLTemplate::AllocateMemoryCPU()
 {
-	input = new PRECISION[maxTime];
-	output = new PRECISION[maxTime];
-	arr = new PRECISION[32];  //memory allocation
+	Eincident =     new PRECISION[maxTime];
+	Etransmitted =  new PRECISION[maxTime];
+	Etemp =         new PRECISION[maxTime]; 
+  Exz1 =          new PRECISION[maxTime];
+	Exz2 =          new PRECISION[maxTime];
 
-	Eincident = new PRECISION[maxTime];
-	Etransmitted = new PRECISION[maxTime];
-	Etemp = new PRECISION[maxTime];
-	Exz1 = new PRECISION[maxTime];
-	Exz2 = new PRECISION[maxTime];
-	mu = new PRECISION[maxTime];
-	epsilon = new PRECISION[maxTime];
-	ez = new PRECISION[maxTime];
-	hy = new PRECISION[maxTime];
+	mu =            new PRECISION[SIZE];
+	epsilon =       new PRECISION[SIZE];
+	ez =            new PRECISION[SIZE];
+	hy =            new PRECISION[SIZE];
 
 	return 0;
 }
 // Initialise CPU data.
 int COpenCLTemplate::InitialiseCPU()
 {
-	for (unsigned int i=0; i<maxTime; i++)
-		input[i] = 0.;
-	for (unsigned int i=0; i<32; i++)
-		arr[i] = i; // . = double value
 
-	for (unsigned int i=0; i<maxTime; i++)
-		Eincident[i] = 0.; // . = double value
-	for (unsigned int i=0; i<maxTime; i++)
-		Etransmitted[i] = 0.; // . = double value
-	for (unsigned int i=0; i<maxTime; i++)
-		Etemp[i] = 0.; // . = double value
-	for (unsigned int i=0; i<maxTime; i++)
-		Exz1[i] = 0.; // . = double value
-	for (unsigned int i=0; i<maxTime; i++)
-		Exz2[i] = 0.; // . = double value
-	for (unsigned int i=0; i<maxTime; i++)
-		ez[i] = 0.; // . = double value
-	for (unsigned int i=0; i<maxTime; i++)
-		hy[i] = 0.; // . = double value
-	for (unsigned int i=0; i<maxTime; i++)
-		mu[i] = 1.2566e-006; // . = double value
+	stream<<"results";
+	//CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
+  
+	pi = 3.14;
+  c = 3e8;
+	PulseWidth = 800;
+	f = 3e9;
+	w = 2 * pi * f;    		// omega
+	k0 = w/c     ; 			// free space wave number constant
+	lambda = c / f;
+	delx = (4*lambda) / SIZE;
+	delt = delx / c;
+	Sc = c * delt / delx;
+	epsilonr = 1;
+	mur = 1;
+
+	for (unsigned int i=0; i<maxTime; i++) {
+		Eincident[i] = 0.; 
+		Etransmitted[i] = 0.; 
+		Etemp[i] = 0.;
+		Exz1[i] = 0.;
+		Exz2[i] = 0.;
+  }
+
+	for (unsigned int i=0; i<SIZE; i++) {
+		ez[i] = 0.;
+		hy[i] = 0.;
+		mu[i] = 1.2566e-006;
+		epsilon[i] = 8.8542e-012;
+  }
+
 	return 0;
 }
 int COpenCLTemplate::InitialiseCL()
@@ -206,15 +215,18 @@ int COpenCLTemplate::AllocateMemoryGPU()
 {
 	cl_int status;
 
-	d_input = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*maxTime, input, &status);
+	hy_gpu = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*SIZE, hy, &status);
 	SafeCall(status, "Error: clCreateBuffer() cannot create input buffer");
 
-	d_output = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*maxTime, output, &status);
+	ez_gpu = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*SIZE, ez, &status);
 	SafeCall(status, "Error: clCreateBuffer() cannot create output buffer");
 	
-	d_arr = clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*32, arr/*cpu input array*/, &status);
-	SafeCall(status, "Error: clCreateBuffer() cannot create arr buffer");
-	
+	mu_gpu = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*SIZE, mu, &status);
+	SafeCall(status, "Error: clCreateBuffer() cannot create output buffer");
+
+	epsilon_gpu = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*SIZE, epsilon, &status);
+	SafeCall(status, "Error: clCreateBuffer() cannot create output buffer");
+
 	return 0;
 }
 int COpenCLTemplate::InitialiseCLKernelsGPU()
@@ -259,57 +271,49 @@ int COpenCLTemplate::InitialiseCLKernelsGPU()
 	}
 
 	// Attach kernel objects to respective kernel functions.
-	kernel = clCreateKernel(program, "OpenCLTemplateKernel", &status);
-	SafeCall(status, "Error: Creating Kernel from program. (clCreateKernel)");
+	hykernel = clCreateKernel(program, "hy_kernel", &status);
+	SafeCall(status, "Error: Creating Kernel from program. (hy_kernel)");
 	
-	kernel2 = clCreateKernel(program, "arrkernal2", &status);
-	SafeCall(status, "Error: Creating Kernel from program. (clCreateKerne2)");
-	
-	
-	// ====== Set appropriate arguments to the kernel ======
-	SafeCall(clSetKernelArg(kernel, 0, sizeof(cl_mem), (void*)&d_input), "Error: Setting kernel argument 'input'");
-	SafeCall(clSetKernelArg(kernel, 1, sizeof(cl_mem), (void*)&d_output), "Error: Setting kernel argument 'output'");
-	SafeCall(clSetKernelArg(kernel, 2, sizeof(PRECISION), (void*)&Multiplier), "Error: Setting kernel argument 'Multiplier'");
-	
-	SafeCall(clSetKernelArg(kernel2, 0/*1st argument*/, sizeof(cl_mem)/*buffer*/, (void*)&d_arr), "Error: Setting kernel argument 'input'");
-	
+	ezkernel = clCreateKernel(program, "ez_kernel", &status);
+	SafeCall(status, "Error: Creating Kernel from program. (ez_kernel)");
 
+	// ====== Set appropriate arguments to the kernel ======
+	SafeCall(clSetKernelArg(hykernel, 0, sizeof(cl_mem), (void*)&hy_gpu), "Error: Setting kernel argument 'hy'");
+	SafeCall(clSetKernelArg(hykernel, 1, sizeof(cl_mem), (void*)&ez_gpu), "Error: Setting kernel argument 'ez'");
+	SafeCall(clSetKernelArg(hykernel, 2, sizeof(cl_mem), (void*)&mu_gpu), "Error: Setting kernel argument 'mu'");
+	SafeCall(clSetKernelArg(hykernel, 3, sizeof(PRECISION), (void*)&delt), "Error: Setting kernel argument 'delt'");
+	SafeCall(clSetKernelArg(hykernel, 4, sizeof(PRECISION), (void*)&delx), "Error: Setting kernel argument 'delx'");
+	SafeCall(clSetKernelArg(hykernel, 5, sizeof(int), (void*)&SIZE), "Error: Setting kernel argument 'SIZE'");
+
+	SafeCall(clSetKernelArg(ezkernel, 0, sizeof(cl_mem), (void*)&hy_gpu), "Error: Setting kernel argument 'hy'");
+	SafeCall(clSetKernelArg(ezkernel, 1, sizeof(cl_mem), (void*)&ez_gpu), "Error: Setting kernel argument 'ez'");
+	SafeCall(clSetKernelArg(ezkernel, 2, sizeof(cl_mem), (void*)&epsilon_gpu), "Error: Setting kernel argument 'mu'");
+	SafeCall(clSetKernelArg(ezkernel, 3, sizeof(PRECISION), (void*)&delt), "Error: Setting kernel argument 'delt'");
+	SafeCall(clSetKernelArg(ezkernel, 4, sizeof(PRECISION), (void*)&delx), "Error: Setting kernel argument 'delx'");
+	SafeCall(clSetKernelArg(ezkernel, 5, sizeof(int), (void*)&SIZE), "Error: Setting kernel argument 'SIZE'");
+	
 	return 0;
 }
 int COpenCLTemplate::RunCLKernels()
 {
-	////////////////////////////////////// my implementation
-	const PRECISION pi = 3.14;
-	int SIZE=1024;
-    int maxTime = 1024;
-	int SourceSelect = 1; 			// 0=Sinosoidal, 1=Gauassian
+	//////////////////////////////	
+  
+  int SourceSelect = 1; 			// 0=Sinosoidal, 1=Gauassian
 	cout<<"----Select Source----"<<endl;
 	cout<<"0)Sinosoidal 1) Gauassian"<<endl;
 	do{
 		cin>>SourceSelect;
 	}while(SourceSelect != 1 && SourceSelect != 0);
 	if (SourceSelect == 0)
-		maxTime = 5001;
-	double c = 3e8;
- 	/* Courant Number (Accuracy) Sc
-	% ideal Condition --> Sc= c*delt/delx = 1
-	% f=3Ghz, lambda=c/f=0.1m, for 4 wavelengths, dx=0.4/(maxtime=1000)*/
-	double PulseWidth = 800;
-	double f = 3e9;
-	double w = 2 * pi * f;    		// omega
-	double k0 = w/c     ; 			// free space wave number constant
-	double lambda = c / f;
-	double delx = (4*lambda) / SIZE;
-	double delt = delx / c;
-	double Sc = c * delt / delx;
-	int epsilonr = 1;
-	int mur = 1;
+		maxTime = 1000;
 
+//////// my implementation
+	StartTimer();
 	// -------- refractive index variables -------- 
 	int Z1 = 750;
-	double z1 = Z1*delx;
+	PRECISION z1 = Z1*delx;
 	int Z2 = 760;
-	double z2 = Z2*delx;
+	PRECISION z2 = Z2*delx;
 	////////////////////////////////////
 	cl_int status;
 	cl_uint maxDims;
@@ -324,14 +328,15 @@ int COpenCLTemplate::RunCLKernels()
 	SafeCall(clGetDeviceInfo(devices[0], CL_DEVICE_MAX_WORK_ITEM_DIMENSIONS, sizeof(cl_uint), (void*)&maxDims, NULL), "Error: Getting Device Info. (clGetDeviceInfo)");
 	SafeCall(clGetDeviceInfo(devices[0], CL_DEVICE_MAX_WORK_ITEM_SIZES, sizeof(size_t)*maxDims, (void*)maxWorkItemSizes, NULL), "Error: Getting Device Info. (clGetDeviceInfo)");
 
-	globalThreads[0] = maxTime;
+  const int TILE_SIZE = 256; 
+  globalThreads[0] = TILE_SIZE*ceil(((float)SIZE - 1)/TILE_SIZE);
 	globalThreads[1] = 1;
-	localThreads[0]  = 256;
+	localThreads[0]  = TILE_SIZE;
 	localThreads[1]  = 1;
 
-	cout << "Max dimensions: " << maxDims << endl;
-	cout << "Device maxWorkGroupSize = " << maxWorkGroupSize << endl;
-	cout << "Device maxWorkItemSizes = " << maxWorkItemSizes[0] << endl;
+	//cout << "Max dimensions: " << maxDims << endl;
+	//cout << "Device maxWorkGroupSize = " << maxWorkGroupSize << endl;
+	//cout << "Device maxWorkItemSizes = " << maxWorkItemSizes[0] << endl;
 	if(localThreads[0] > maxWorkGroupSize || localThreads[0] > maxWorkItemSizes[0])
 	{
 		cout<<"Unsupported: Device does not support requested number of work items." << endl;
@@ -343,70 +348,178 @@ int COpenCLTemplate::RunCLKernels()
 	cl_ulong kernelExecTimeNs;
 	cl_ulong kernelExecTimeNsT = 0;
 
-	cout << "Launching CL Kernel..." << endl;
-	cout << "Global threads: " << globalThreads[0] << "x" << globalThreads[1] << endl;
-	cout << "Local threads: " << localThreads[0] << "x" << localThreads[1] << endl;
+	//cout << "Launching CL Kernel..." << endl;
+	//cout << "Global threads: " << globalThreads[0] << "x" << globalThreads[1] << endl;
+	//cout << "Local threads: " << localThreads[0] << "x" << localThreads[1] << endl;
 
-	// Enqueue a kernel call.
-	status = clEnqueueNDRangeKernel(commandQueue, kernel, 2, NULL, globalThreads, localThreads, 0, NULL, &events[0]);
-	if(status != CL_SUCCESS) 
-	{ 
-		cout << "Error: Enqueueing kernel onto command queue (clEnqueueNDRangeKernel)" << endl;
-		if ( status == CL_INVALID_COMMAND_QUEUE ) cout << "CL_INVALID_COMMAND_QUEUE." << endl;
-		if ( status == CL_INVALID_PROGRAM_EXECUTABLE ) cout << "CL_INVALID_PROGRAM_EXECUTABLE." << endl;
-		if ( status == CL_INVALID_KERNEL ) cout << "CL_INVALID_KERNEL." << endl;
-		if ( status == CL_INVALID_WORK_DIMENSION ) cout << "CL_INVALID_WORK_DIMENSION." << endl;
-		if ( status == CL_INVALID_CONTEXT ) cout << "CL_INVALID_CONTEXT." << endl;
-		if ( status == CL_INVALID_KERNEL_ARGS ) cout << "CL_INVALID_KERNEL_ARGS." << endl;
-		if ( status == CL_INVALID_WORK_GROUP_SIZE ) cout << "CL_INVALID_WORK_GROUP_SIZE." << endl;
-		if ( status == CL_INVALID_WORK_ITEM_SIZE ) cout << "CL_INVALID_WORK_ITEM_SIZE." << endl;
-		if ( status == CL_INVALID_GLOBAL_OFFSET ) cout << "CL_INVALID_GLOBAL_OFFSET." << endl;
-		return 1;
-	}
-
-	// Wait for the kernel call to finish execution.
-	SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
-
-	clGetEventProfilingInfo(events[0], CL_PROFILING_COMMAND_START, sizeof(cl_ulong), &startTime, NULL);
-	clGetEventProfilingInfo(events[0], CL_PROFILING_COMMAND_END, sizeof(cl_ulong), &endTime, NULL);
-	kernelExecTimeNs = (cl_ulong)(1e-3*(endTime-startTime));
-	kernelExecTimeNsT = kernelExecTimeNsT + kernelExecTimeNs;
-
-	cout << "Kernel run complete!" << endl;
-	cout << "Kernel execution time = " << kernelExecTimeNsT/1e6 << "sec (" << kernelExecTimeNsT/1e3 << "ms or " << kernelExecTimeNsT << "us)" << endl;
-	//SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
-	///////////////////////////--------------
-	globalThreads[0] = 32;
-	globalThreads[1] = 1;
-	localThreads[0]  = 32;
-	localThreads[1]  = 1;
-
-	// Enqueue a kernel call.
-	status = clEnqueueNDRangeKernel(commandQueue, kernel2, 2, NULL, globalThreads, localThreads, 0, NULL, &events[0]);
-	if(status != CL_SUCCESS) 
-	{ 
-		cout << "Error: Enqueueing kernel onto command queue (clEnqueueNDRangeKernel)" << endl;
-		if ( status == CL_INVALID_COMMAND_QUEUE ) cout << "CL_INVALID_COMMAND_QUEUE." << endl;
-		if ( status == CL_INVALID_PROGRAM_EXECUTABLE ) cout << "CL_INVALID_PROGRAM_EXECUTABLE." << endl;
-		if ( status == CL_INVALID_KERNEL ) cout << "CL_INVALID_KERNEL." << endl;
-		if ( status == CL_INVALID_WORK_DIMENSION ) cout << "CL_INVALID_WORK_DIMENSION." << endl;
-		if ( status == CL_INVALID_CONTEXT ) cout << "CL_INVALID_CONTEXT." << endl;
-		if ( status == CL_INVALID_KERNEL_ARGS ) cout << "CL_INVALID_KERNEL_ARGS." << endl;
-		if ( status == CL_INVALID_WORK_GROUP_SIZE ) cout << "CL_INVALID_WORK_GROUP_SIZE." << endl;
-		if ( status == CL_INVALID_WORK_ITEM_SIZE ) cout << "CL_INVALID_WORK_ITEM_SIZE." << endl;
-		if ( status == CL_INVALID_GLOBAL_OFFSET ) cout << "CL_INVALID_GLOBAL_OFFSET." << endl;
-		return 1;
-	}
-
-	// Wait for the kernel call to finish execution.
-	SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
-	SafeCall(status = clEnqueueReadBuffer(commandQueue, d_arr, CL_TRUE, 0,  sizeof(PRECISION)*32, arr, 0, NULL, &events[1]),"Error: clEnqueueReadBuffer Failed.");
-	SafeCall(clWaitForEvents(1, &events[1]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
-	for (int i=0;i<32;i++)
+	for (int medium=1; medium<=2; medium++)
 	{
-		cout<<arr[i]<<endl;
-	}
-	SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
+    // Temp Variable
+    int mm = 0;
+	  PRECISION ez1q = 0; 
+    PRECISION ez2q = 0;
+	  PRECISION ezmq = 0;
+	  PRECISION ezm1q = 0;
+	
+		// -------- Medium Specifications -------- 
+		if (medium==1)
+		{
+			cout<<"Calculating Wave propagation in Free Space"<<endl;
+		}
+		else
+		{
+			cout<<"Calculating Wave propagation in denser Medium"<<endl;
+			int j;
+			for(j=0; j<SIZE-(SIZE/2); j++)								//epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; // half medium
+				epsilon[j] = 8.8542e-012;
+			for(int k=j ;k<SIZE ;k++)
+				epsilon[j] = 1.7708e-011;
+
+	    epsilon_gpu = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*SIZE, epsilon, &status);
+	    SafeCall(status, "Error: clCreateBuffer() cannot create output buffer");
+		}
+
+    for (int qTime=0; qTime<(maxTime-1); qTime++) {
+
+	    status = clEnqueueNDRangeKernel(commandQueue, hykernel, 2, NULL, globalThreads, localThreads, 0, NULL, &events[0]);
+	    if(status != CL_SUCCESS) 
+	    { 
+	    	cout << "Error: Enqueueing kernel onto command queue (clEnqueueNDRangeKernel)" << endl;
+	    	if ( status == CL_INVALID_COMMAND_QUEUE ) cout << "CL_INVALID_COMMAND_QUEUE." << endl;
+	    	if ( status == CL_INVALID_PROGRAM_EXECUTABLE ) cout << "CL_INVALID_PROGRAM_EXECUTABLE." << endl;
+	    	if ( status == CL_INVALID_KERNEL ) cout << "CL_INVALID_KERNEL." << endl;
+	    	if ( status == CL_INVALID_WORK_DIMENSION ) cout << "CL_INVALID_WORK_DIMENSION." << endl;
+	    	if ( status == CL_INVALID_CONTEXT ) cout << "CL_INVALID_CONTEXT." << endl;
+	    	if ( status == CL_INVALID_KERNEL_ARGS ) cout << "CL_INVALID_KERNEL_ARGS." << endl;
+	    	if ( status == CL_INVALID_WORK_GROUP_SIZE ) cout << "CL_INVALID_WORK_GROUP_SIZE." << endl;
+	    	if ( status == CL_INVALID_WORK_ITEM_SIZE ) cout << "CL_INVALID_WORK_ITEM_SIZE." << endl;
+	    	if ( status == CL_INVALID_GLOBAL_OFFSET ) cout << "CL_INVALID_GLOBAL_OFFSET." << endl;
+	    	return 1;
+	    }
+
+	    // Wait for the kernel call to finish execution.
+	    SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
+	    SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
+
+      /////////////////////////////////////////////// 2nd kernel ///////////////////////////////////////////
+	    status = clEnqueueNDRangeKernel(commandQueue, ezkernel, 2, NULL, globalThreads, localThreads, 0, NULL, &events[0]);
+	    if(status != CL_SUCCESS) 
+	    { 
+	    	cout << "Error: Enqueueing kernel onto command queue (clEnqueueNDRangeKernel)" << endl;
+	    	if ( status == CL_INVALID_COMMAND_QUEUE ) cout << "CL_INVALID_COMMAND_QUEUE." << endl;
+	    	if ( status == CL_INVALID_PROGRAM_EXECUTABLE ) cout << "CL_INVALID_PROGRAM_EXECUTABLE." << endl;
+	    	if ( status == CL_INVALID_KERNEL ) cout << "CL_INVALID_KERNEL." << endl;
+	    	if ( status == CL_INVALID_WORK_DIMENSION ) cout << "CL_INVALID_WORK_DIMENSION." << endl;
+	    	if ( status == CL_INVALID_CONTEXT ) cout << "CL_INVALID_CONTEXT." << endl;
+	    	if ( status == CL_INVALID_KERNEL_ARGS ) cout << "CL_INVALID_KERNEL_ARGS." << endl;
+	    	if ( status == CL_INVALID_WORK_GROUP_SIZE ) cout << "CL_INVALID_WORK_GROUP_SIZE." << endl;
+	    	if ( status == CL_INVALID_WORK_ITEM_SIZE ) cout << "CL_INVALID_WORK_ITEM_SIZE." << endl;
+	    	if ( status == CL_INVALID_GLOBAL_OFFSET ) cout << "CL_INVALID_GLOBAL_OFFSET." << endl;
+	    	return 1;
+	    }
+
+	    // Wait for the kernel call to finish execution.
+	    SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
+	    SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
+
+      //// Copy data back to host ////
+      SafeCall(clEnqueueReadBuffer(commandQueue, ez_gpu, CL_TRUE, 0,  sizeof(PRECISION)*SIZE, ez, 0, NULL, NULL), "Error reading ez back to host memory");    
+      /////////////////////////////////////////////////////////////////////////
+      if (SourceSelect==0)															//Source node
+	  	    ez[1] = ez[1] + (sin(2*pi*(qTime)*f*delt)*Sc);
+	  	else
+		{
+	  	    ez[1] = ez[1] + exp((-(qTime+1 - 30) * (qTime - 30)) / (PulseWidth/4));
+	  }
+	        Etemp[qTime]= ez[SIZE-498]; 													//Save ez after boundary
+	      
+	      // -------- Absorbing Boundary Conditions -------- 
+	        ez[0] = ez2q+(ez[1]-ez1q)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );	
+	        ez[SIZE-1] = ezm1q+(ez[SIZE-1-1]-ezmq)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );
+	      
+	      // -------- Saving pervious step time values -------- 
+	  	ez2q = ez[1]; 
+	  	ez1q = ez[0]; 
+	  	ezmq = ez[SIZE-1];
+	  	ezm1q= ez[SIZE-2];
+	  	Exz1[qTime] = ez[Z1-1];
+	    Exz2[qTime] = ez[Z2-1];
+
+         // -------- Saving to file -------- 
+			stream.str(std::string());   						// clear stringstream
+			stream<<"./results/"<<"Efield"<<medium<<"_"<<qTime<<".jd";   		// concatenate
+			filename = stream.str();		 					// copy string
+			snapshot.open(filename.c_str(), ios::out|ios::binary);
+			for (mm = 0; mm < SIZE; mm++)
+				snapshot.write((char *)&ez[mm],sizeof(float));
+			snapshot.close();
+
+      // Copy ez data to gpu
+      SafeCall(clEnqueueWriteBuffer(commandQueue, ez_gpu, CL_TRUE, 0,  sizeof(PRECISION)*SIZE, ez, 0, NULL, NULL), "Error writing ez back to GPU");    
+
+    }
+		if (medium==1)
+		{
+			for(int i=0;i<maxTime;i++)
+			Eincident[i] = Etemp[i];
+		}
+		else
+		{
+			for(int i=0;i<maxTime;i++)
+			Etransmitted[i] = Etemp[i];
+		}
+  }
+
+	cout<<"Writing Values to files"<<endl;
+	stream.str(std::string());
+	stream<<"./results/"<<"Eincident"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename.c_str(), ios::out|ios::binary);
+	for (int mm = 0; mm < SIZE; mm++)
+	snapshot.write((char *)&Eincident[mm],(sizeof(float)));
+	snapshot.close();
+
+	stream.str(std::string());
+	stream<<"./results/"<<"Etransmitted"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename.c_str(), ios::out|ios::binary);
+	for (int mm = 0; mm < SIZE; mm++)
+	snapshot.write((char *)&Etransmitted[mm],(sizeof(float)));
+	snapshot.close();
+
+	stream.str(std::string());
+	stream<<"./results/"<<"Exz1"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename.c_str(), ios::out|ios::binary);
+	for (int mm = 0; mm < SIZE; mm++)
+	snapshot.write((char *)&Exz1[mm],(sizeof(float)));
+	snapshot.close();
+
+	stream.str(std::string());
+	stream<<"./results/"<<"Exz2"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename.c_str(), ios::out|ios::binary);
+	for (int mm = 0; mm < SIZE; mm++)
+	snapshot.write((char *)&Exz2[mm],(sizeof(float)));
+	snapshot.close();
+
+	stream.str(std::string());
+	stream<<"./results/"<<"maxTime"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename.c_str(), ios::out|ios::binary);
+	snapshot.write((char *)&maxTime,(sizeof(int)));
+	snapshot.close();
+
+	stream.str(std::string());
+	stream<<"./results/"<<"data"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename.c_str(), ios::out|ios::binary);
+	snapshot.write((char *)&delt,(sizeof(float)));
+	snapshot.write((char *)&k0,(sizeof(float)));
+	snapshot.write((char *)&z1,(sizeof(PRECISION)));
+	snapshot.write((char *)&z2,(sizeof(PRECISION)));
+	snapshot.close();
+	StopTimer();
 	return 0;
 }
 int COpenCLTemplate::CompleteRun()
@@ -420,7 +533,7 @@ int COpenCLTemplate::CompleteRun()
 	SafeCall(CleanupCPU(), "Error: Cleaning up CPU.");
 	SafeCall(CleanupCL(), "Error: Cleaning up CL.");
 	SafeCall(CleanupGPU(), "Error: Cleaning up GPU.");
-
+  
 	return 0;
 }
 // Converts contents of a file into a string. From OPENCL examples.
@@ -514,14 +627,22 @@ template<typename T> void DeleteArray(T *&ptr)
 }
 int COpenCLTemplate::CleanupCPU()
 {
-	DeleteArray(input);
-	DeleteArray(output);
+	DeleteArray(Eincident);
+	DeleteArray(Etransmitted);
+	DeleteArray(Etemp);
+	DeleteArray(Exz1);
+	DeleteArray(Exz2);
+	DeleteArray(mu);
+	DeleteArray(epsilon);
+	DeleteArray(ez);
+	DeleteArray(hy);
 
 	return 0;
 }
 int COpenCLTemplate::CleanupCL()
 {
-	SafeCall(clReleaseKernel(kernel), "Error: In clReleaseKernel");
+	SafeCall(clReleaseKernel(hykernel), "Error: In clReleaseKernel");
+	SafeCall(clReleaseKernel(ezkernel), "Error: In clReleaseKernel");
 	SafeCall(clReleaseProgram(program), "Error: In clReleaseProgram");
 	SafeCall(clReleaseCommandQueue(commandQueue), "Error: In clReleaseCommandQueue");
 	SafeCall(clReleaseContext(context), "Error: In clReleaseContext");
@@ -530,14 +651,23 @@ int COpenCLTemplate::CleanupCL()
 }
 int COpenCLTemplate::CleanupGPU()
 {
-	SafeCall(clReleaseMemObject(d_input), "Error: clReleaseMemObject() cannot release input memory buffer");
-	SafeCall(clReleaseMemObject(d_output), "Error: clReleaseMemObject() cannot release output memory buffer");
+	SafeCall(clReleaseMemObject(hy_gpu), "Error: clReleaseMemObject() cannot release input memory buffer");
+	SafeCall(clReleaseMemObject(ez_gpu), "Error: clReleaseMemObject() cannot release output memory buffer");
+	SafeCall(clReleaseMemObject(mu_gpu), "Error: clReleaseMemObject() cannot release input memory buffer");
+	SafeCall(clReleaseMemObject(epsilon_gpu), "Error: clReleaseMemObject() cannot release output memory buffer");
 
 	return 0;
 }
 COpenCLTemplate::~COpenCLTemplate ()
 {
 	// Field arrays.
-	DeleteArray(input);
-	DeleteArray(output);
+	DeleteArray(Eincident);
+	DeleteArray(Etransmitted);
+	DeleteArray(Etemp);
+	DeleteArray(Exz1);
+	DeleteArray(Exz2);
+	DeleteArray(mu);
+	DeleteArray(epsilon);
+	DeleteArray(ez);
+	DeleteArray(hy);
 }

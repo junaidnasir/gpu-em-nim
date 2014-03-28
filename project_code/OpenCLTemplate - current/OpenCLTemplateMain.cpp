@@ -4,12 +4,15 @@ using namespace std;
 
 int main(int argc, char * argv[])
 {
-	COpenCLTemplate OpenCLTemplateSim(/*Size=*/1024U, /*Multiplier=*/2.0);
-	//int array[32];
+
+  int SIZE = 1000;
+  int maxTime = 1024;
+
+	COpenCLTemplate OpenCLTemplateSim(maxTime, SIZE);
 	// ================== Simulation ================
-	OpenCLTemplateSim.StartTimer();
+	
 	OpenCLTemplateSim.CompleteRun(); // Complete GPU run.
-	OpenCLTemplateSim.StopTimer();
+	
 	cout << "Total time taken = " << OpenCLTemplateSim.GetElapsedTime() << " seconds." << endl;
 
 	return 0;

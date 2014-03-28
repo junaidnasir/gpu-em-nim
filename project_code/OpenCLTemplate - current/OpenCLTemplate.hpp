@@ -2,39 +2,58 @@
 #define OpenCLTemplate_H_
 
 #define PRECISION float
+//#define PRECISION double
 
 #include <Timer.h>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <CL/cl.h>
+
+using namespace std;
 
 class COpenCLTemplate
 {
 private:
-	// Size of problem domain
-//	const unsigned int Width;
-	const unsigned int maxTime;
-	// Host data arrays.
-	PRECISION* input;
-	PRECISION* output;
-	PRECISION* arr;
+	int maxTime;
+	const int SIZE;
+
+  fstream snapshot;
+	std::string filename ;
+	std::stringstream stream;
+
+	PRECISION pi;
+    PRECISION c;
+	PRECISION PulseWidth;
+	PRECISION f;
+	PRECISION w;
+	PRECISION k0;
+	PRECISION lambda;
+	PRECISION delx;
+	PRECISION delt;
+	PRECISION Sc;
+	int epsilonr;
+	int mur;
 
 	PRECISION* Eincident;
 	PRECISION* Etransmitted;
 	PRECISION* Etemp;
 	PRECISION* Exz1;
 	PRECISION* Exz2;
+
 	PRECISION* mu;
 	PRECISION* epsilon;
 	PRECISION* ez;
 	PRECISION* hy;
 	// Scalar.
-	const PRECISION Multiplier; //variables here----------
 	
 
 	// Device data arrays.
-	cl_mem d_input;
-	cl_mem d_output;
-	cl_mem d_arr; //buffer in gpu
+  cl_mem hy_gpu;
+  cl_mem ez_gpu;
+  cl_mem mu_gpu;
+  cl_mem epsilon_gpu;
 
 	cl_mem d_Eincident;
 	cl_mem d_Etransmitted;
@@ -52,8 +71,8 @@ private:
 	cl_device_id *devices;
 	cl_command_queue commandQueue;
 	cl_program program;
-	cl_kernel kernel;
-	cl_kernel kernel2;
+	cl_kernel hykernel;
+	cl_kernel ezkernel;
 	// ==================================================
 
 	// Timer variables.
@@ -63,7 +82,7 @@ private:
 	bool tPaused;
 
 public:
-	COpenCLTemplate(unsigned int=256U, const PRECISION=2.0);	// Default width of problem is 256 and multiplier is 2.
+	COpenCLTemplate(int=1000, int=1024);	// Default width of problem is 256 and multiplier is 2.
 
 	// Memory allocation and initialisation.
 	int AllocateMemoryCPU();
