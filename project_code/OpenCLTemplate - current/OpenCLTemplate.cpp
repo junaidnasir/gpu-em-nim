@@ -87,15 +87,15 @@ int COpenCLTemplate::InitialiseCL()
 	char nVidiaPlatform[] = "NVIDIA Corporation";
 	char *SelectedPlatform = NULL;
 
-	char choice = '0';
-	cout << "Choose a platform: " << endl;
+	char choice = '1';
+/*	cout << "Choose a platform: " << endl;
 	cout << "[1] Advanced Micro Devices, Inc. (default)" << endl;
 	cout << "[2] NVIDIA Corporation" << endl;
 	cout << ">>";
 	StopTimer();
 	cin >> choice;
 	StartTimer();
-
+*/
 	if (choice == '1')
 		SelectedPlatform = AMDPlatform;
 	else if (choice == '2')
@@ -141,14 +141,15 @@ int COpenCLTemplate::InitialiseCL()
 	/////////////////////////////////////////////////////////////////
 	cl_device_type type;
 
-	cout << "Emulate GPU run on CPU?" << endl;
+/*	cout << "Emulate GPU run on CPU?" << endl;
 	cout << "[1] Yes" << endl;
 	cout << "[2] No (default)" << endl;
 	cout << ">>";
 	StopTimer();
 	cin >> choice;
 	StartTimer();
-
+*/
+	choice='2';
 	if (choice == '1')
 	{
 		if(!strcmp(AMDPlatform, SelectedPlatform))
@@ -299,16 +300,16 @@ int COpenCLTemplate::RunCLKernels()
 	//////////////////////////////	
   
   int SourceSelect = 1; 			// 0=Sinosoidal, 1=Gauassian
-	cout<<"----Select Source----"<<endl;
+/*	cout<<"----Select Source----"<<endl;
 	cout<<"0)Sinosoidal 1) Gauassian"<<endl;
 	do{
 		cin>>SourceSelect;
 	}while(SourceSelect != 1 && SourceSelect != 0);
 	if (SourceSelect == 0)
 		maxTime = 1000;
-
+*/
 //////// my implementation
-	StartTimer();
+	
 	// -------- refractive index variables -------- 
 	int Z1 = 750;
 	PRECISION z1 = Z1*delx;
@@ -329,9 +330,9 @@ int COpenCLTemplate::RunCLKernels()
 	SafeCall(clGetDeviceInfo(devices[0], CL_DEVICE_MAX_WORK_ITEM_SIZES, sizeof(size_t)*maxDims, (void*)maxWorkItemSizes, NULL), "Error: Getting Device Info. (clGetDeviceInfo)");
 
   const int TILE_SIZE = 256; 
-  globalThreads[0] = TILE_SIZE*ceil(((float)SIZE - 1)/TILE_SIZE);
+  globalThreads[0] = 1024;//TILE_SIZE*ceil(((float)SIZE - 1)/TILE_SIZE);
 	globalThreads[1] = 1;
-	localThreads[0]  = TILE_SIZE;
+	localThreads[0]  = 256;
 	localThreads[1]  = 1;
 
 	//cout << "Max dimensions: " << maxDims << endl;
@@ -519,7 +520,7 @@ int COpenCLTemplate::RunCLKernels()
 	snapshot.write((char *)&z1,(sizeof(PRECISION)));
 	snapshot.write((char *)&z2,(sizeof(PRECISION)));
 	snapshot.close();
-	StopTimer();
+	
 	return 0;
 }
 int COpenCLTemplate::CompleteRun()
