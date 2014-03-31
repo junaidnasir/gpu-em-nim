@@ -19,7 +19,7 @@ private:
 	int maxTime;
 	const int SIZE;
 
-  fstream snapshot;
+    fstream snapshot;
 	std::string filename ;
 	std::stringstream stream;
 
