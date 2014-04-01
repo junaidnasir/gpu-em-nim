@@ -22,7 +22,7 @@ int COpenCLTemplate::AllocateMemoryCPU()
 	Eincident =     new PRECISION[maxTime];
 	Etransmitted =  new PRECISION[maxTime];
 	Etemp =         new PRECISION[maxTime]; 
-  Exz1 =          new PRECISION[maxTime];
+    Exz1 =          new PRECISION[maxTime];
 	Exz2 =          new PRECISION[maxTime];
 
 	mu =            new PRECISION[SIZE];
@@ -38,9 +38,9 @@ int COpenCLTemplate::InitialiseCPU()
 
 	stream<<"results";
 	//CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
-  
+    SourceSelect=1;
 	pi = 3.14;
-  c = 3e8;
+    c = 3e8;
 	PulseWidth = 800;
 	f = 3e9;
 	w = 2 * pi * f;    		// omega
@@ -51,7 +51,13 @@ int COpenCLTemplate::InitialiseCPU()
 	Sc = c * delt / delx;
 	epsilonr = 1;
 	mur = 1;
-
+	ez1q = 0; 
+    ez2q = 0;
+	ezmq = 0;
+	ezm1q = 0;
+	Z1=750;
+	Z2=760;
+	qTime=0;
 	for (unsigned int i=0; i<maxTime; i++) {
 		Eincident[i] = 0.; 
 		Etransmitted[i] = 0.; 
@@ -149,7 +155,7 @@ int COpenCLTemplate::InitialiseCL()
 	cin >> choice;
 	StartTimer();
 */
-	choice='1';
+	choice='2';
 	if (choice == '1')
 	{
 		if(!strcmp(AMDPlatform, SelectedPlatform))
@@ -228,6 +234,15 @@ int COpenCLTemplate::AllocateMemoryGPU()
 	epsilon_gpu = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*SIZE, epsilon, &status);
 	SafeCall(status, "Error: clCreateBuffer() cannot create output buffer");
 
+	Etemp_gpu = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*maxTime, Etemp, &status);
+	SafeCall(status, "Error: clCreateBuffer() cannot create output buffer");
+
+	Exz1_gpu = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*maxTime, Exz1, &status);
+	SafeCall(status, "Error: clCreateBuffer() cannot create output buffer");
+
+	Exz2_gpu = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_USE_HOST_PTR, sizeof(PRECISION)*maxTime, Exz2, &status);
+	SafeCall(status, "Error: clCreateBuffer() cannot create output buffer");
+
 	return 0;
 }
 int COpenCLTemplate::InitialiseCLKernelsGPU()
@@ -293,12 +308,29 @@ int COpenCLTemplate::InitialiseCLKernelsGPU()
 	SafeCall(clSetKernelArg(ezkernel, 4, sizeof(PRECISION), (void*)&delx), "Error: Setting kernel argument 'delx'");
 	SafeCall(clSetKernelArg(ezkernel, 5, sizeof(int), (void*)&SIZE), "Error: Setting kernel argument 'SIZE'");
 	
+	SafeCall(clSetKernelArg(ezkernel, 6, sizeof(cl_mem), (void*)&Etemp_gpu), "Error: Setting kernel argument 'Etemp'");
+	SafeCall(clSetKernelArg(ezkernel, 7, sizeof(cl_mem), (void*)&Exz1_gpu), "Error: Setting kernel argument 'Exz1'");
+	SafeCall(clSetKernelArg(ezkernel, 8, sizeof(cl_mem), (void*)&Exz2_gpu), "Error: Setting kernel argument 'Exz2'");
+	SafeCall(clSetKernelArg(ezkernel, 9, sizeof(int), (void*)&qTime), "Error: Setting kernel argument 'qTime'");
+	SafeCall(clSetKernelArg(ezkernel, 10, sizeof(PRECISION), (void*)&mur), "Error: Setting kernel argument 'mur'");
+	SafeCall(clSetKernelArg(ezkernel, 11, sizeof(PRECISION), (void*)&epsilonr), "Error: Setting kernel argument 'epsilonr'");
+	SafeCall(clSetKernelArg(ezkernel, 12, sizeof(PRECISION), (void*)&Sc), "Error: Setting kernel argument 'Sc'");
+	SafeCall(clSetKernelArg(ezkernel, 13, sizeof(PRECISION), (void*)&ez1q), "Error: Setting kernel argument 'ez1q'");
+	SafeCall(clSetKernelArg(ezkernel, 14, sizeof(PRECISION), (void*)&ez2q), "Error: Setting kernel argument 'ez2q'");
+	SafeCall(clSetKernelArg(ezkernel, 15, sizeof(PRECISION), (void*)&ezmq), "Error: Setting kernel argument 'ezmq'");
+	SafeCall(clSetKernelArg(ezkernel, 16, sizeof(PRECISION), (void*)&ezm1q), "Error: Setting kernel argument 'ezm1q'");
+	SafeCall(clSetKernelArg(ezkernel, 17, sizeof(PRECISION), (void*)&pi), "Error: Setting kernel argument 'pi'");
+	SafeCall(clSetKernelArg(ezkernel, 18, sizeof(PRECISION), (void*)&f), "Error: Setting kernel argument 'f'");
+	SafeCall(clSetKernelArg(ezkernel, 19, sizeof(int), (void*)&SourceSelect), "Error: Setting kernel argument 'SourceSelect'");
+	SafeCall(clSetKernelArg(ezkernel, 20, sizeof(PRECISION), (void*)&PulseWidth), "Error: Setting kernel argument 'PulseWidth'");
+	SafeCall(clSetKernelArg(ezkernel, 21, sizeof(int), (void*)&Z1), "Error: Setting kernel argument 'Z1'");
+	SafeCall(clSetKernelArg(ezkernel, 22, sizeof(int), (void*)&Z2), "Error: Setting kernel argument 'Z2'");
 	return 0;
 }
 int COpenCLTemplate::RunCLKernels()
 {
 	//////////////////////////////	
-  
+  int mm;
   int SourceSelect = 1; 			// 0=Sinosoidal, 1=Gauassian
 /*	cout<<"----Select Source----"<<endl;
 	cout<<"0)Sinosoidal 1) Gauassian"<<endl;
@@ -311,9 +343,7 @@ int COpenCLTemplate::RunCLKernels()
 //////// my implementation
 	
 	// -------- refractive index variables -------- 
-	int Z1 = 750;
 	PRECISION z1 = Z1*delx;
-	int Z2 = 760;
 	PRECISION z2 = Z2*delx;
 	////////////////////////////////////
 	cl_int status;
@@ -354,13 +384,7 @@ int COpenCLTemplate::RunCLKernels()
 	//cout << "Local threads: " << localThreads[0] << "x" << localThreads[1] << endl;
 
 	for (int medium=1; medium<=2; medium++)
-	{
-    // Temp Variable
-    int mm = 0;
-	  PRECISION ez1q = 0; 
-    PRECISION ez2q = 0;
-	  PRECISION ezmq = 0;
-	  PRECISION ezm1q = 0;
+	{  
 	
 		// -------- Medium Specifications -------- 
 		if (medium==1)
@@ -371,7 +395,7 @@ int COpenCLTemplate::RunCLKernels()
 		{
 			cout<<"Calculating Wave propagation in denser Medium"<<endl;
 			int j;
-			for(j=0; j<SIZE-(SIZE/2); j++)								//epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; // half medium
+			for(j=0; j<SIZE-(SIZE/2); j++)		//epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; // half medium
 				epsilon[j] = 8.8542e-012;
 			for(int k=j ;k<SIZE ;k++)
 				epsilon[j] = 1.7708e-011;
@@ -381,6 +405,7 @@ int COpenCLTemplate::RunCLKernels()
 		}
 
     for (int qTime=0; qTime<(maxTime-1); qTime++) {
+		SafeCall(clSetKernelArg(ezkernel, 9, sizeof(int), (void*)&qTime), "Error: Setting kernel argument 'qTime'");
 
 	    status = clEnqueueNDRangeKernel(commandQueue, hykernel, 2, NULL, globalThreads, localThreads, 0, NULL, &events[0]);
 	    if(status != CL_SUCCESS) 
@@ -424,42 +449,26 @@ int COpenCLTemplate::RunCLKernels()
 	    SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
 
       //// Copy data back to host ////
-     // SafeCall(clEnqueueReadBuffer(commandQueue, ez_gpu, CL_TRUE, 0,  sizeof(PRECISION)*SIZE, ez, 0, NULL, NULL), "Error reading ez back to host memory");    
-      
+      SafeCall(clEnqueueReadBuffer(commandQueue, ez_gpu, CL_TRUE, 0,  sizeof(PRECISION)*SIZE, ez, 0, NULL, NULL), "Error reading ez back to host memory");    
+      SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
 	  /////////////////////////////////////////////////////////////////////////
-      if (SourceSelect==0)															//Source node
-	  	    ez[1] = ez[1] + (sin(2*pi*(qTime)*f*delt)*Sc);
-	  	else
-		{
-	  	    ez[1] = ez[1] + exp((-(qTime+1 - 30) * (qTime - 30)) / (PulseWidth/4));
-	  }
-	        Etemp[qTime]= ez[SIZE-(SIZE/2)+2]; 													//Save ez after boundary
-	      
-	      // -------- Absorbing Boundary Conditions -------- 
-	        ez[0] = ez2q+(ez[1]-ez1q)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );	
-	        ez[SIZE-1] = ezm1q+(ez[SIZE-1-1]-ezmq)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );
-	      
-	      // -------- Saving pervious step time values -------- 
-	  	ez2q = ez[1]; 
-	  	ez1q = ez[0]; 
-	  	ezmq = ez[SIZE-1];
-	  	ezm1q= ez[SIZE-2];
-	  	Exz1[qTime] = ez[Z1-1];
-	    Exz2[qTime] = ez[Z2-1];
+  
 
-      /*   // -------- Saving to file -------- 
+         // -------- Saving to file -------- 
 			stream.str(std::string());   						// clear stringstream
-			stream<<"./results/"<<"Efield"<<medium<<"_"<<qTime<<".jd";   		// concatenate
+			stream<<"./results/"<<"Efield"<<medium<<"_"<<qTime+1<<".jd";   		// concatenate
 			filename = stream.str();		 					// copy string
 			snapshot.open(filename.c_str(), ios::out|ios::binary);
 			for (mm = 0; mm < SIZE; mm++)
 				snapshot.write((char *)&ez[mm],sizeof(float));
 			snapshot.close();
-	  */
+	 
       // Copy ez data to gpu
      // SafeCall(clEnqueueWriteBuffer(commandQueue, ez_gpu, CL_TRUE, 0,  sizeof(PRECISION)*SIZE, ez, 0, NULL, NULL), "Error writing ez back to GPU");    
 
     }
+	SafeCall(clEnqueueReadBuffer(commandQueue, Etemp_gpu, CL_TRUE, 0,  sizeof(PRECISION)*maxTime, Etemp, 0, NULL, NULL), "Error reading ez back to host memory");    
+    SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
 		if (medium==1)
 		{
 			for(int i=0;i<maxTime;i++)
@@ -477,7 +486,7 @@ int COpenCLTemplate::RunCLKernels()
 	stream<<"./results/"<<"Eincident"<<".jd";
 	filename = stream.str();
 	snapshot.open(filename.c_str(), ios::out|ios::binary);
-	for (int mm = 0; mm < SIZE; mm++)
+	for (int mm = 0; mm < maxTime; mm++)
 	snapshot.write((char *)&Eincident[mm],(sizeof(float)));
 	snapshot.close();
 
@@ -485,23 +494,27 @@ int COpenCLTemplate::RunCLKernels()
 	stream<<"./results/"<<"Etransmitted"<<".jd";
 	filename = stream.str();
 	snapshot.open(filename.c_str(), ios::out|ios::binary);
-	for (int mm = 0; mm < SIZE; mm++)
+	for (int mm = 0; mm < maxTime; mm++)
 	snapshot.write((char *)&Etransmitted[mm],(sizeof(float)));
 	snapshot.close();
 
+	SafeCall(clEnqueueReadBuffer(commandQueue, Exz1_gpu, CL_TRUE, 0,  sizeof(PRECISION)*maxTime, Exz1, 0, NULL, NULL), "Error reading Exz1 back to host memory");    
+    SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
 	stream.str(std::string());
 	stream<<"./results/"<<"Exz1"<<".jd";
 	filename = stream.str();
 	snapshot.open(filename.c_str(), ios::out|ios::binary);
-	for (int mm = 0; mm < SIZE; mm++)
+	for (int mm = 0; mm < maxTime; mm++)
 	snapshot.write((char *)&Exz1[mm],(sizeof(float)));
 	snapshot.close();
 
+	SafeCall(clEnqueueReadBuffer(commandQueue, Exz2_gpu, CL_TRUE, 0,  sizeof(PRECISION)*maxTime, Exz2, 0, NULL, NULL), "Error reading Exz2 back to host memory");    
+    SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
 	stream.str(std::string());
 	stream<<"./results/"<<"Exz2"<<".jd";
 	filename = stream.str();
 	snapshot.open(filename.c_str(), ios::out|ios::binary);
-	for (int mm = 0; mm < SIZE; mm++)
+	for (int mm = 0; mm < maxTime; mm++)
 	snapshot.write((char *)&Exz2[mm],(sizeof(float)));
 	snapshot.close();
 
@@ -510,6 +523,13 @@ int COpenCLTemplate::RunCLKernels()
 	filename = stream.str();
 	snapshot.open(filename.c_str(), ios::out|ios::binary);
 	snapshot.write((char *)&maxTime,(sizeof(int)));
+	snapshot.close();
+
+	stream.str(std::string());
+	stream<<"./results/"<<"SIZE"<<".jd";
+	filename = stream.str();
+	snapshot.open(filename.c_str(), ios::out|ios::binary);
+	snapshot.write((char *)&SIZE,(sizeof(int)));
 	snapshot.close();
 
 	stream.str(std::string());
