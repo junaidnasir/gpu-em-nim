@@ -1,6 +1,6 @@
 tic
 clc;
-SIZE=5120;
+SIZE=1024;
 maxTime = 1024;
 SourceSelect=1; % 0=Sinosoidal, 1=Gauassian
 if (SourceSelect==0)
