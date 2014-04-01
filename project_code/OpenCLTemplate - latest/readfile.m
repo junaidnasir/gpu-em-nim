@@ -118,7 +118,7 @@ line([3e9 3e9],[-15 1.415],'Color','Red')
 line([0e9 3e9],[1.415 1.415],'Color','Red')
 
 for medium= 1:2
-    j=0;
+    j=1;
     for qTime = 1:(maxTime)
         fidp = fopen(strcat(filepath,'\Efield',int2str(medium),'_',int2str(j),'.jd'),'r','l');
         if fidp==-1

@@ -20,7 +20,7 @@ __kernel void ez_kernel(__global PRECISION *hy, __global PRECISION *ez, __global
 	unsigned int i = get_global_id(0);
   if(i > 0 && i < SIZE)
     ez[i] = ez[i] + (hy[i] - hy[i-1]) * (delt/(delx*epsilon[i]));
-	cout
+
   if (SourceSelect==0)	
   {														//Source node
 	ez[1] = ez[1] + (sin(2*pi*(qTime)*f*delt)*Sc);
