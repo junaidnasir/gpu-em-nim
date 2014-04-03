@@ -1,19 +1,19 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <windows.h>
+//#include <windows.h>
 
 using namespace std;
 const double pi = 3.14;
 
-void main()
+int main()
 {
 	// -------- Save to file Variables -------- 
 	fstream snapshot;
 	std::string filename ;
 	std::stringstream stream;
 	stream<<"results";
-	CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
+	//CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
 
 	int SIZE=1000;
     int maxTime = 1024;
@@ -229,5 +229,6 @@ void main()
 	delete[] hy;
 	delete[] Exz1;
 	delete[] Exz2;
+return 0;
 }
 
