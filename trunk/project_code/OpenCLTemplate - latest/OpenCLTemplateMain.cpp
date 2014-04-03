@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <cmath>
 using namespace std;
 
 int main(int argc, char * argv[])
@@ -15,16 +16,16 @@ int main(int argc, char * argv[])
    int SIZE = 0;
    int maxTime = 1024;
    float time=0;
-   int i=0;
-while(i<=10)
+   int i=10;
+while(i<=24)
 {
-	SIZE += 1024;
+	SIZE = pow(2,i);
 	COpenCLTemplate OpenCLTemplateSim(maxTime, SIZE);
 	// ================== Simulation ================
 	OpenCLTemplateSim.StartTimer();
 	OpenCLTemplateSim.CompleteRun();   // Complete GPU run.
 	OpenCLTemplateSim.StopTimer();
-	cout <<"SIZE"<<SIZE<< ": time= " << OpenCLTemplateSim.GetElapsedTime() << " seconds." << endl;
+	cout <<"SIZE= "<<SIZE<< ": time= " << OpenCLTemplateSim.GetElapsedTime() << " seconds." << endl;
 	/*time=OpenCLTemplateSim.GetElapsedTime();
 	stream.str(std::string());
 	stream<<"./results/"<<"time"<<".txt";

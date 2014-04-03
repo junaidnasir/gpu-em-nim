@@ -156,7 +156,7 @@ int COpenCLTemplate::InitialiseCL()
 	cin >> choice;
 	StartTimer();
 */
-	choice='2';
+	choice='1';
 	if (choice == '1')
 	{
 		if(!strcmp(AMDPlatform, SelectedPlatform))
@@ -189,7 +189,7 @@ int COpenCLTemplate::InitialiseCL()
 
 	char platformVendor[1024];
 	SafeCall(clGetPlatformInfo(platform, CL_PLATFORM_VENDOR, sizeof(platformVendor), platformVendor, NULL), "clGetPlatformInfo failed");
-	cout << "Selected Platform Vendor : " << platformVendor << endl;
+//a	cout << "Selected Platform Vendor : " << platformVendor << endl;
 
 	// Get number of devices available 
 	cl_uint deviceCount = 0;
@@ -448,7 +448,7 @@ int COpenCLTemplate::RunCLKernels()
 	    // Wait for the kernel call to finish execution.
 	    SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
 	    SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
-	if (qTime % 20 ==0)
+/*	if (qTime % 20 ==0)
 {
       //// Copy data back to host ////
       SafeCall(clEnqueueReadBuffer(commandQueue, ez_gpu, CL_TRUE, 0,  sizeof(PRECISION)*SIZE, ez, 0, NULL, NULL), "Error reading ez back to host memory");    
@@ -464,7 +464,7 @@ int COpenCLTemplate::RunCLKernels()
 			for (mm = 0; mm < SIZE; mm++)
 				snapshot.write((char *)&ez[mm],sizeof(float));
 			snapshot.close();
-	 }   
+	 }   */
 
     }
 	SafeCall(clEnqueueReadBuffer(commandQueue, Etemp_gpu, CL_TRUE, 0,  sizeof(PRECISION)*maxTime, Etemp, 0, NULL, NULL), "Error reading ez back to host memory");    
@@ -480,7 +480,7 @@ int COpenCLTemplate::RunCLKernels()
 			Etransmitted[i] = Etemp[i];
 		}
   }
-
+/*
 //a	cout<<"Writing Values to files"<<endl;
 	stream.str(std::string());
 	stream<<"./results/"<<"Eincident"<<".jd";
@@ -541,7 +541,7 @@ int COpenCLTemplate::RunCLKernels()
 	snapshot.write((char *)&z1,(sizeof(PRECISION)));
 	snapshot.write((char *)&z2,(sizeof(PRECISION)));
 	snapshot.close();
-	
+	*/
 	return 0;
 }
 int COpenCLTemplate::CompleteRun()
