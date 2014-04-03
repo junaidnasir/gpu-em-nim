@@ -8,6 +8,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <string>
+#include <cmath>
 //#include <windows.h>
 using namespace std;
 
@@ -112,8 +113,8 @@ int COpenCLTemplate::InitialiseCL()
 		SelectedPlatform = AMDPlatform;
 	}
 
-	cout << "Detecting platforms..." << endl;
-	cout << "Available platforms are: " << endl;
+//	cout << "Detecting platforms..." << endl;
+//	cout << "Available platforms are: " << endl;
 	if(numPlatforms > 0)
 	{
 		cl_platform_id* platforms = new cl_platform_id[numPlatforms];
@@ -167,7 +168,7 @@ int COpenCLTemplate::InitialiseCL()
 	}
 	else
 	{
-		cout << "Running on GPU..." << endl;
+//a		cout << "Running on GPU..." << endl;
 		type = CL_DEVICE_TYPE_GPU;
 	}
 
@@ -200,19 +201,19 @@ int COpenCLTemplate::InitialiseCL()
 	// Get device ids
 	SafeCall(clGetDeviceIDs(platform, type, deviceCount, deviceIds, NULL), "clGetDeviceIDs failed");
 
-	cout << "Available devices are: " << endl;
+//a	cout << "Available devices are: " << endl;
 	// Print device index and device names
 	for(cl_uint i = 0; i < deviceCount; ++i)
 	{
 		char deviceName[1024];
 		SafeCall(clGetDeviceInfo(deviceIds[i], CL_DEVICE_NAME, sizeof(deviceName), deviceName, NULL), "clGetDeviceInfo failed");
-		cout << "Device " << i << " : " << deviceName <<" Device ID is "<<deviceIds[i]<< endl;
+//a		cout << "Device " << i << " : " << deviceName <<" Device ID is "<<deviceIds[i]<< endl;
 	}
 	free(deviceIds);
 	/////////////////////////////////////////////////////////////////
 	// Create an OpenCL command queue
 	/////////////////////////////////////////////////////////////////
-	cout << "Running on Device 0..." << endl;
+//a	cout << "Running on Device 0..." << endl;
 	commandQueue = clCreateCommandQueue(context, devices[0], CL_QUEUE_PROFILING_ENABLE, &status);
 	SafeCall(status, "Creating Command Queue. (clCreateCommandQueue)");
 
@@ -389,11 +390,11 @@ int COpenCLTemplate::RunCLKernels()
 		// -------- Medium Specifications -------- 
 		if (medium==1)
 		{
-			cout<<"Calculating Wave propagation in Free Space"<<endl;
+//a			cout<<"Calculating Wave propagation in Free Space"<<endl;
 		}
 		else
 		{
-			cout<<"Calculating Wave propagation in denser Medium"<<endl;
+//a			cout<<"Calculating Wave propagation in denser Medium"<<endl;
 			int j;
 			for(j=0; j<SIZE-(SIZE/2); j++)		//epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; // half medium
 				epsilon[j] = 8.8542e-012;
@@ -447,7 +448,8 @@ int COpenCLTemplate::RunCLKernels()
 	    // Wait for the kernel call to finish execution.
 	    SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
 	    SafeCall(clReleaseEvent(events[0]), "Error: Release event object. (clReleaseEvent)\n");
-
+	if (qTime % 20 ==0)
+{
       //// Copy data back to host ////
       SafeCall(clEnqueueReadBuffer(commandQueue, ez_gpu, CL_TRUE, 0,  sizeof(PRECISION)*SIZE, ez, 0, NULL, NULL), "Error reading ez back to host memory");    
       SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
@@ -462,9 +464,7 @@ int COpenCLTemplate::RunCLKernels()
 			for (mm = 0; mm < SIZE; mm++)
 				snapshot.write((char *)&ez[mm],sizeof(float));
 			snapshot.close();
-	 
-      // Copy ez data to gpu
-     // SafeCall(clEnqueueWriteBuffer(commandQueue, ez_gpu, CL_TRUE, 0,  sizeof(PRECISION)*SIZE, ez, 0, NULL, NULL), "Error writing ez back to GPU");    
+	 }   
 
     }
 	SafeCall(clEnqueueReadBuffer(commandQueue, Etemp_gpu, CL_TRUE, 0,  sizeof(PRECISION)*maxTime, Etemp, 0, NULL, NULL), "Error reading ez back to host memory");    
@@ -481,7 +481,7 @@ int COpenCLTemplate::RunCLKernels()
 		}
   }
 
-	cout<<"Writing Values to files"<<endl;
+//a	cout<<"Writing Values to files"<<endl;
 	stream.str(std::string());
 	stream<<"./results/"<<"Eincident"<<".jd";
 	filename = stream.str();
@@ -677,7 +677,9 @@ int COpenCLTemplate::CleanupGPU()
 	SafeCall(clReleaseMemObject(ez_gpu), "Error: clReleaseMemObject() cannot release output memory buffer");
 	SafeCall(clReleaseMemObject(mu_gpu), "Error: clReleaseMemObject() cannot release input memory buffer");
 	SafeCall(clReleaseMemObject(epsilon_gpu), "Error: clReleaseMemObject() cannot release output memory buffer");
-
+	SafeCall(clReleaseMemObject(Etemp_gpu), "Error: clReleaseMemObject() cannot release output memory buffer");
+	SafeCall(clReleaseMemObject(Exz1_gpu), "Error: clReleaseMemObject() cannot release output memory buffer");
+	SafeCall(clReleaseMemObject(Exz2_gpu), "Error: clReleaseMemObject() cannot release output memory buffer");
 	return 0;
 }
 COpenCLTemplate::~COpenCLTemplate ()

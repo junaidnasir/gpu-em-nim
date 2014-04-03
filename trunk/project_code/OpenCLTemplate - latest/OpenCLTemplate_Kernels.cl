@@ -31,8 +31,8 @@ __kernel void ez_kernel(__global PRECISION *hy, __global PRECISION *ez, __global
 	}
   Etemp[qTime]= ez[SIZE-(SIZE/2)+2]; 													//Save ez after boundary
   // -------- Absorbing Boundary Conditions -------- 
-  ez[0] = ez2q+(ez[1]-ez1q)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );
-  ez[SIZE-1] = ezm1q+(ez[SIZE-1-1]-ezmq)*( ((Sc/pow(mur*epsilonr,0.5))-1 ) / ((Sc/pow(mur*epsilonr,0.5))+1) );	  
+  ez[0] = ez2q+(ez[1]-ez1q)*( ((Sc/pow(mur*epsilonr,0.5f))-1 ) / ((Sc/pow(mur*epsilonr,0.5f))+1.f) );
+  ez[SIZE-1] = ezm1q+(ez[SIZE-1-1]-ezmq)*( ((Sc/pow(mur*epsilonr,0.5f))-1.f ) / ((Sc/pow(mur*epsilonr,0.5f))+1.f) );	  
   
   barrier(CLK_GLOBAL_MEM_FENCE|CLK_LOCAL_MEM_FENCE);    
   // -------- Saving pervious step time values -------- 
