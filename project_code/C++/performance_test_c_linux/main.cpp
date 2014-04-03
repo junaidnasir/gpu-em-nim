@@ -1,32 +1,49 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <cmath>
 //#include <windows.h>
+#include <cmath>
+#include "Timer.h"
 
 using namespace std;
+//#define __int64 long long;
 const double pi = 3.14;
-
+__int64 tStart=0;
+__int64 tEnd=0;
+__int64 tDelta=0;
+//double time;
+bool tPaused;
+/*
+void StartTimer();
+void StopTimer();
+void ResetTimer();
+float GetElapsedTime();
+*/
 int main()
 {
+	
+	for (int a=10;a<25;a++)
+	{
+	tStart = GetTimeus64();
 	// -------- Save to file Variables -------- 
 	fstream snapshot;
 	std::string filename ;
 	std::stringstream stream;
-	stream<<"results";
-	//CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
-
-	int SIZE=1000;
+//	stream<<"results";
+//	CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
+	double temp=pow(2.,a);
+	int SIZE=temp;
+	cout<<SIZE<<endl;
     int maxTime = 1024;
 	int SourceSelect = 1; 			// 0=Sinosoidal, 1=Gauassian
-	cout<<"----Select Source----"<<endl;
+	/*cout<<"----Select Source----"<<endl;
 	cout<<"0)Sinosoidal 1) Gauassian"<<endl;
 	do{
 		cin>>SourceSelect;
 	}while(SourceSelect != 1 && SourceSelect != 0);
 	if (SourceSelect == 0)
 		maxTime = 5001;
-
+*/
 	// -------- Constants -------- 
 	double c = 3e8;
 
@@ -97,13 +114,13 @@ int main()
 		// -------- Medium Specifications -------- 
 		if (medium==1)
 		{
-			cout<<"Calculating Wave propagation in Free Space"<<endl;
+//			cout<<"Calculating Wave propagation in Free Space"<<endl;
 			for(int j=0; j<SIZE; j++)
 				epsilon[j] = 8.8542e-012;   						//epsilon=8.8542e-012*ones(1,SIZE); // free space
 		}
 		else
 		{
-			cout<<"Calculating Wave propagation in denser Medium"<<endl;
+//			cout<<"Calculating Wave propagation in denser Medium"<<endl;
 			int j;
 			for(j=0; j<SIZE-500; j++)								//epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; // half medium
 				epsilon[j] = 8.8542e-012;
@@ -166,12 +183,12 @@ int main()
 		
 	} //end medium loop
 	
-	cout<<"Writing Values to files"<<endl;
+//	cout<<"Writing Values to files"<<endl;
 	stream.str(std::string());
 	stream<<"./results/"<<"Eincident"<<".jd";
 	filename = stream.str();
 	snapshot.open(filename.c_str(), ios::out|ios::binary);
-	for (int mm = 0; mm < SIZE; mm++)
+	for (int mm = 0; mm < maxTime; mm++)
 	snapshot.write((char *)&Eincident[mm],(sizeof(double)));
 	snapshot.close();
 
@@ -179,7 +196,7 @@ int main()
 	stream<<"./results/"<<"Etransmitted"<<".jd";
 	filename = stream.str();
 	snapshot.open(filename.c_str(), ios::out|ios::binary);
-	for (int mm = 0; mm < SIZE; mm++)
+	for (int mm = 0; mm < maxTime; mm++)
 	snapshot.write((char *)&Etransmitted[mm],(sizeof(double)));
 	snapshot.close();
 
@@ -187,7 +204,7 @@ int main()
 	stream<<"./results/"<<"Exz1"<<".jd";
 	filename = stream.str();
 	snapshot.open(filename.c_str(), ios::out|ios::binary);
-	for (int mm = 0; mm < SIZE; mm++)
+	for (int mm = 0; mm < maxTime; mm++)
 	snapshot.write((char *)&Exz1[mm],(sizeof(double)));
 	snapshot.close();
 
@@ -195,7 +212,7 @@ int main()
 	stream<<"./results/"<<"Exz2"<<".jd";
 	filename = stream.str();
 	snapshot.open(filename.c_str(), ios::out|ios::binary);
-	for (int mm = 0; mm < SIZE; mm++)
+	for (int mm = 0; mm < maxTime; mm++)
 	snapshot.write((char *)&Exz2[mm],(sizeof(double)));
 	snapshot.close();
 
@@ -217,9 +234,14 @@ int main()
 	snapshot.close();
 
 	cout<<endl;
-	cout<<"Enter anything to exit"<<endl;
-	cin>>SourceSelect;
+	//cout<<"Enter anything to exit"<<endl;
+	//cin>>SourceSelect;
 
+	tEnd = GetTimeus64(); // Get ending time.
+	//time=((tEnd-tStart))/(1000000.) ;
+	cout << "Time taken = " << ((tEnd-tStart))/(1000000.) << " seconds." << endl;
+	//ResetTimer();
+	//cin>>SourceSelect;
 	// -------- Memory Deallocaion -----------
 	delete[] Eincident;
 	delete[] Etransmitted;
@@ -230,6 +252,44 @@ int main()
 	delete[] hy;
 	delete[] Exz1;
 	delete[] Exz2;
-return 0;
+	tStart=0;
+	tEnd=0;
+	}
+//	cin>>time;
+	return 0;
 }
+/*
+void StartTimer()
+{
+	if (tPaused == true)
+	{
+		tStart = GetTimeus64();
+		tPaused = false;
+	}
+}
+void StopTimer()
+{
+	if (tPaused == false)
+	{
+		tEnd = GetTimeus64();
+		tDelta += tEnd - tStart;
+		tStart = tEnd;
+		tPaused = true;
+	}
+}
+void ResetTimer()
+{
+	if (tPaused == true)
+		tStart = tEnd;
+	else
+		tStart = GetTimeus64();
 
+	tDelta = 0UL;
+}
+float GetElapsedTime()
+{
+	if (tPaused == false)
+		tEnd = GetTimeus64();
+
+	return ((double)(tEnd-tStart+tDelta))/(1000000.);
+}*/
