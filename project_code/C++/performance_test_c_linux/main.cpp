@@ -159,7 +159,8 @@ int main()
 			ezm1q= ez[SIZE-2];
 			Exz1[qTime] = ez[Z1-1];
 	        Exz2[qTime] = ez[Z2-1];
-
+	if (qTime %20==0)
+	{
 	        // -------- Saving to file -------- 
 			stream.str(std::string());   						// clear stringstream
 			stream<<"./results/"<<"Efield"<<medium<<"_"<<qTime<<".jd";   		// concatenate
@@ -168,6 +169,7 @@ int main()
 			for (mm = 0; mm < SIZE; mm++)
 				snapshot.write((char *)&ez[mm],sizeof(double));
 			snapshot.close();
+	}
 		} //end qTime
 
 		if (medium==1)

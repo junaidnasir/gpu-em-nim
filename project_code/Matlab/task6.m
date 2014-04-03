@@ -1,6 +1,9 @@
 tic
 clc;
-SIZE=1024;
+a=15;
+for a=24:30
+    
+SIZE=2^a
 maxTime = 1024;
 SourceSelect=1; % 0=Sinosoidal, 1=Gauassian
 if (SourceSelect==0)
@@ -19,7 +22,7 @@ k0=w/c     ; % free space wave number constant
 lambda=c/f;
 delx=(4*lambda)/SIZE;
 % so dt=dx/c=1.333e-12
-delt=delx/c
+delt=delx/c;
 Sc=c*delt/delx;
 epsilonr=1;
 mur=1;
@@ -165,3 +168,4 @@ toc
 % line([0e9 3e9],[1.415 1.415],'Color','Red')
 % 
 % ReferectiveIndex=(1/(k0*(760-750)*i))*log(FEtransmitted(760)/FEtransmitted(750))
+end
