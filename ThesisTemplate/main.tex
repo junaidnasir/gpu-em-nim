@@ -25,13 +25,42 @@
 %	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
 %----------------------------------------------------------------------------------------
 
-\documentclass[11pt, a4paper, oneside]{Thesis} % Paper size, default font size and one-sided paper
+\documentclass[12pt, a4paper, oneside]{Thesis} % Paper size, default font size and one-sided paper
 
 \graphicspath{{Pictures/}} % Specifies the directory where pictures are stored
 
 \usepackage[square, numbers, comma, sort&compress]{natbib} % Use the natbib reference package - read up on this to edit the reference style; if you want text (e.g. Smith et al., 2012) for the in-text references (instead of numbers), remove 'numbers' 
-\hypersetup{urlcolor=blue, colorlinks=true} % Colors hyperlinks in blue - change to black if annoying
+\hypersetup{urlcolor=black, colorlinks=false} % Colors hyperlinks in blue - change to black if annoying
 \title{\ttitle} % Defines the thesis title - don't touch this
+
+\usepackage{amsmath}
+\usepackage{microtype}	% Font improvement for pdflatex.
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usepackage{verbatim}
+\usepackage{url}
+\usepackage{float}					% Floating figure placement.
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{makeidx}
+
+% Listings for wrapping code.
+\lstset{breaklines=true, basicstyle=\footnotesize\ttfamily, tabsize=4, numbers=left, stepnumber=1, frame=single, showstringspaces=false}
+% Use this before inserting C++ code snippet using lstlisting.
+%\lstset{language=[ISO]C++, commentstyle=\color{green!50!black}, keywordstyle=\color{blue}, stringstyle=\color{red!60!black}}
+% Use this before inserting Matlab code.
+%\lstset{language=Matlab, commentstyle=\color{green!50!black}, keywordstyle=\color{blue}, stringstyle=\color{red!60!black}}
+
+% Links direct to top of figures.
+\usepackage[all]{hypcap}
+
+% Index directive.
+\makeindex
+
+% Line spacing.
+\def\SingleSpacing{\def\baselinestretch{1}\large\normalsize}
+\def\DoubleSpacing{\def\baselinestretch{1.5}\large\normalsize}
 
 \begin{document}
 
@@ -58,66 +87,78 @@
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
 
+% Title page
+
 \begin{titlepage}
 \begin{center}
 
-\textsc{\LARGE \univname}\\[1.5cm] % University name
-\textsc{\Large Doctoral Thesis}\\[0.5cm] % Thesis type
+\textsc{\LARGE \univname}\\[0.5cm] % University name
+% Project title.
+\rule{\linewidth}{0.5mm}\\[0.3cm]
+{\Large \bfseries \ttitle}\\
+\rule{\linewidth}{0.5mm}\\[0.5cm]
 
-\HRule \\[0.4cm] % Horizontal line
-{\huge \bfseries \ttitle}\\[0.4cm] % Thesis title
-\HRule \\[1.5cm] % Horizontal line
- 
-\begin{minipage}{0.4\textwidth}
-\begin{flushleft} \large
-\emph{Author:}\\
-\href{http://www.johnsmith.com}{\authornames} % Author name - remove the \href bracket to remove the link
-\end{flushleft}
-\end{minipage}
-\begin{minipage}{0.4\textwidth}
-\begin{flushright} \large
-\emph{Supervisor:} \\
-\href{http://www.jamessmith.com}{\supname} % Supervisor name - remove the \href bracket to remove the link  
-\end{flushright}
-\end{minipage}\\[3cm]
- 
-\large \textit{A thesis submitted in fulfilment of the requirements\\ for the degree of \degreename}\\[0.3cm] % University requirement text
-\textit{in the}\\[0.4cm]
-\groupname\\\deptname\\[2cm] % Research group name and department name
- 
-{\large \today}\\[4cm] % Date
-%\includegraphics{Logo} % University/department logo - uncomment to place it
- 
-\vfill
+{\large By}\\[0.5cm]
+{\large \bfseries Author 1\\ Author 2\\ Author 3}\\[1cm]
+
+{\large This thesis is submitted in partial fulfilment of the requirements for the degree of}\\[1cm]
+{\large \bfseries \degreename\\[0.2cm] in\\[0.2cm] Electrical Engineering}\\[1.0cm]
+
+\includegraphics[scale=0.15]{Figures/NU_Logo.png}\\[1.0cm]
+
+{\large \bfseries Department of Electrical Engineering}\\[0.2cm]
+{\large \bfseries NUCES--FAST}\\[0.2cm]
+{\large \bfseries ISLAMABAD, PAKISTAN}\\[0.2cm]
+{\large \bfseries \today}
+
 \end{center}
-
 \end{titlepage}
 
 %----------------------------------------------------------------------------------------
-%	DECLARATION PAGE
-%	Your institution may give you a different text to place here
+%	CERTIFICATION PAGE
 %----------------------------------------------------------------------------------------
 
+\clearpage
+\Certification{
+\begin{center}
+{NATIONAL UNIVERSITY OF COMPUTER \& EMERGING SCIENCES\\DEPARTMENT OF ELECTRICAL ENGINEERING}\\[0.5cm]
+\end{center}
+
+I, Dr. FirstName LastName, the supervisor of Author 1, Author 2 and Author 3 hereby certify that I have thoroughly read, reviewed and evaluated his thesis titled \emph{``\ttitle''}. This final draft of the thesis has incorporated all the changes (major or minor) suggested by the evaluation panel during the oral defence of thesis. Therefore, I on behalf of the members of evaluation panel recommend to the Department of Electrical Engineering to formally accept this thesis in partial fulfilment of the requirements for the degree of Bachelor of Science in Electrical Engineering.\\[0.1cm]
+\begin{flushright}
+Date:~\rule{3cm}{0.2mm}\\[2cm]
+\end{flushright}
+\begin{center}
+Supervisor:~\rule{5cm}{0.2mm}\\
+\hspace{1.8cm}
+(Dr. FirstName LastName)\\[3cm]
+\rule{5cm}{0.2mm}\\
+Dr. Waseem Ikram\\
+Professor \& Head\\
+Department of Electrical Engineering
+\end{center}
+}
+%----------------------------------------------------------------------------------------
+%	DECLARATION PAGE
+%----------------------------------------------------------------------------------------
+
+\clearpage
 \Declaration{
 
 \addtocontents{toc}{\vspace{1em}} % Add a gap in the Contents, for aesthetics
 
-I, \authornames, declare that this thesis titled, '\ttitle' and the work presented in it are my own. I confirm that:
 
-\begin{itemize} 
-\item[\tiny{$\blacksquare$}] This work was done wholly or mainly while in candidature for a research degree at this University.
-\item[\tiny{$\blacksquare$}] Where any part of this thesis has previously been submitted for a degree or any other qualification at this University or any other institution, this has been clearly stated.
-\item[\tiny{$\blacksquare$}] Where I have consulted the published work of others, this is always clearly attributed.
-\item[\tiny{$\blacksquare$}] Where I have quoted from the work of others, the source is always given. With the exception of such quotations, this thesis is entirely my own work.
-\item[\tiny{$\blacksquare$}] I have acknowledged all main sources of help.
-\item[\tiny{$\blacksquare$}] Where the thesis is based on work done by myself jointly with others, I have made clear exactly what was done by others and what I have contributed myself.\\
-\end{itemize}
- 
-Signed:\\
-\rule[1em]{25em}{0.5pt} % This prints a line for the signature
- 
-Date:\\
-\rule[1em]{25em}{0.5pt} % This prints a line to write the date
+We, Author 1, Author 2 and Author 3 take full responsibility of the research work conducted during the BS thesis titled \emph{``\ttitle''}. We solemnly declare that the research work presented in this thesis is done solely by me with no significant help from any other person; however, small help wherever taken is duly acknowledged. We have also written the complete thesis by ourself. Moreover, we have not presented this thesis (or substantially similar research work) or any part of the thesis previously to any other degree awarding institution within Pakistan or abroad.\\[0.1cm]
+\begin{flushright}
+\rule{5cm}{0.2mm}\\
+Author 1 (BB-RRRR)\\
+Author 2 (BB-RRRR)\\
+Author 3 (BB-RRR)\\[1.2cm]
+%\rule{5cm}{0.2mm}\\
+Verified by Plagiarism Cell Officer\\[0.5cm]
+Signed:~\rule{4.5cm}{0.2mm}\\[0.5cm]
+Date:~\rule{4.5cm}{0.2mm}\\[2cm]
+\end{flushright}
 }
 
 \clearpage % Start a new page
@@ -126,19 +167,19 @@ Date:\\
 %	QUOTATION PAGE
 %----------------------------------------------------------------------------------------
 
-\pagestyle{empty} % No headers or footers for the following pages
-
-\null\vfill % Add some space to move the quote down the page a bit
-
-\textit{``Thanks to my solid academic training, today I can write hundreds of words on virtually any topic without possessing a shred of information, which is how I got a good job in journalism."}
-
-\begin{flushright}
-Dave Barry
-\end{flushright}
-
-\vfill\vfill\vfill\vfill\vfill\vfill\null % Add some space at the bottom to position the quote just right
-
-\clearpage % Start a new page
+%\pagestyle{empty} % No headers or footers for the following pages
+%
+%\null\vfill % Add some space to move the quote down the page a bit
+%
+%\textit{``Thanks to my solid academic training, today I can write hundreds of words on virtually any topic without possessing a shred of information, which is how I got a good job in journalism."}
+%
+%\begin{flushright}
+%Dave Barry
+%\end{flushright}
+%
+%\vfill\vfill\vfill\vfill\vfill\vfill\null % Add some space at the bottom to position the quote just right
+%
+%\clearpage % Start a new page
 
 %----------------------------------------------------------------------------------------
 %	ABSTRACT PAGE
@@ -291,4 +332,13 @@ $\omega$ & angular frequency & rads$^{-1}$ \\
 
 \bibliography{Bibliography} % The references (bibliography) information are stored in the file named "Bibliography.bib"
 
-\end{document}  
+%----------------------------------------------------------------------------------------
+%	Index
+%----------------------------------------------------------------------------------------
+
+\clearpage % Start a new page
+\label{Index}
+\addtotoc{Index}
+\printindex
+
+\end{document}

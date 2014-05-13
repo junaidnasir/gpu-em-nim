@@ -58,6 +58,19 @@
 %\cleardoublepage
 }
 
+\newcommand\Certification[1]{
+\btypeout{Certification}
+\addtotoc{Certification}
+\thispagestyle{plain}
+\null\vfil
+%\vskip 60\p@
+\begin{center}{\huge\bf Certification\par}\end{center}
+%\vskip 60\p@
+{\normalsize #1}
+\vfil\vfil\null
+%\cleardoublepage
+}
+
 \newcommand\btypeout[1]{\bhrule\typeout{\space #1}\bhrule}
 \def\today{\ifcase\month\or
   January\or February\or March\or April\or May\or June\or
@@ -140,20 +153,20 @@
 \usepackage{rotating}
 \usepackage{listings}
 \usepackage{lstpatch}
-\lstset{captionpos=b,
-        frame=tb,
-        basicstyle=\scriptsize\ttfamily,
-        showstringspaces=false,
-        keepspaces=true}
-\lstdefinestyle{matlab} {
-        language=Matlab,
-        keywordstyle=\color{blue},
-        commentstyle=\color[rgb]{0.13,0.55,0.13}\em,
-        stringstyle=\color[rgb]{0.7,0,0} }
-\usepackage[pdfpagemode={UseOutlines},bookmarks=true,bookmarksopen=true,
-   bookmarksopenlevel=0,bookmarksnumbered=true,hypertexnames=false,
+%\lstset{captionpos=b,
+%        frame=tb,
+%        basicstyle=\scriptsize\ttfamily,
+%        showstringspaces=false,
+%        keepspaces=true}
+%\lstdefinestyle{matlab} {
+%        language=Matlab,
+%        keywordstyle=\color{blue},
+%        commentstyle=\color[rgb]{0.13,0.55,0.13}\em,
+%        stringstyle=\color[rgb]{0.7,0,0} }
+\usepackage[pdfpagemode={UseOutlines}, %bookmarks=true,bookmarksopen=true,
+   %bookmarksopenlevel=0,bookmarksnumbered=true,hypertexnames=false,
    colorlinks,linkcolor={blue},citecolor={blue},urlcolor={red},
-   pdfstartview={FitV},unicode,breaklinks=true]{hyperref}
+   pdfstartview={FitV},unicode,breaklinks=true,hidelinks=true]{hyperref}
 \pdfstringdefDisableCommands{
    \let\\\space
 }
@@ -182,15 +195,15 @@
 %	defined as \examname above so you cite it as \examname
 %----------------------------------------------------------------------------------------
 
-\thesistitle{Thesis Title} % Your thesis title - this is used in the title and abstract
+\thesistitle{Thesis Title} % Your thesis title - this is used in the title
 %-------------------------------------------------  
-\supervisor{Dr. James \textsc{Smith}} % You supervisor's name - this is used in the title page
+\supervisor{Dr. FirstName SecondName} % You supervisor's name - this is used in the title page
 %-------------------------------------------------   
 \examiner{} % Your examiner's name - this is not currently used anywhere in the template, cite it with \examname if you want it
 %-------------------------------------------------   
-\degree{Doctor of Philosophy} % Your degree name - this is currently used in the title page and abstract
+\degree{Bachelor of Science} % Your degree name - this is currently used in the title page
 %-------------------------------------------------   
-\authors{John \textsc{Smith}} % Your name - this is used in the title page and abstract
+\authors{Author 1, Author 2 and Author 3} % Your name - this is used in the title page
 %-------------------------------------------------   
 \addresses{} % Your address - this is not currently used anywhere in the template, cite it with \addressnames if you want it
 %-------------------------------------------------   
@@ -198,38 +211,20 @@
 %-------------------------------------------------   
 \keywords{} % Keywords for your thesis - this is not currently used anywhere in the template, cite it with \keywordnames if you want it
 %-------------------------------------------------   
-\university{\texorpdfstring{\href{http://www.university.com} % Your university's URL
-                {University Name}} % Your university's name - this is currently used in the title page
-                {University Name}}
+\university{\texorpdfstring{{National University of Computer \& Emerging Sciences}} % Your university's name - this is currently used in the title page
+                {National University of Computer \& Emerging Sciences}}
 %-------------------------------------------------   
-\UNIVERSITY{\texorpdfstring{\href{University Web Site URL Here (include http://)} % Your university's URL
-                {UNIVERSITY NAME (IN BLOCK CAPITALS)}} % Your university's name in capitals - this is currently used in the abstract page
-                {UNIVERSITY NAME (IN BLOCK CAPITALS)}}
+\UNIVERSITY{\texorpdfstring{{NATIONAL UNIVERSITY OF COMPUTER \& EMERGING SCIENCES}} % Your university's name in capitals - this is currently used in the abstract page
+                {NATIONAL UNIVERSITY OF COMPUTER \& EMERGING SCIENCES}}
 %-------------------------------------------------                
-\department{\texorpdfstring{\href{Department or School Web Site URL Here (include http://)} % Your department's URL
-                {Department or School Name}} % Your department's name - used in the title page and abstract
-                {Department or School Name}}
+\department{\texorpdfstring{
+                {Department of Electrical Engineering}} % Your department's name - used in the title page and abstract
+                {Department of Electrical Engineering}}
 %-------------------------------------------------                
-\DEPARTMENT{\texorpdfstring{\href{Department or School Web Site URL Here (include http://)} % Your department's URL
-                {DEPARTMENT OR SCHOOL NAME (IN BLOCK CAPITALS)}} % Your department's name in capitals - this is not currently used anywhere in the template, cite it with \DEPTNAME if you want it
-                {DEPARTMENT OR SCHOOL NAME (IN BLOCK CAPITALS)}}
+\DEPARTMENT{\texorpdfstring{
+                {DEPARTMENT OF ELECTRICAL ENGINEERING}} % Your department's name in capitals - this is not currently used anywhere in the template, cite it with \DEPTNAME if you want it
+                {DEPARTMENT OF ELECTRICAL ENGINEERING}}
 %-------------------------------------------------                
-\group{\texorpdfstring{\href{Research Group Web Site URL Here (include http://)} % Your research group's URL
-                {Research Group Name}} % Your research group's name - this is currently used in the title page 
-                {Research Group Name}}
-%-------------------------------------------------                
-\GROUP{\texorpdfstring{\href{Research Group Web Site URL Here (include http://)} % Your research group's URL
-                {RESEARCH GROUP NAME (IN BLOCK CAPITALS)}} % Your research group's name in capitals - this is not currently used anywhere in the template, cite it with \GROUPNAME if you want it
-                {RESEARCH GROUP NAME (IN BLOCK CAPITALS)}}
-%-------------------------------------------------                
-\faculty{\texorpdfstring{\href{Faculty Web Site URL Here (include http://)} % Your faculty's URL
-                {Faculty Name}} % Your faculty's name - this is currently used in the abstract page
-                {Faculty Name}}
-%-------------------------------------------------                
-\FACULTY{\texorpdfstring{\href{Faculty Web Site URL Here (include http://)} % Your faculty's URL
-                {FACULTY NAME (IN BLOCK CAPITALS)}} % Your faculty's name in capitals - this is not currently used anywhere in the template, cite it with \FACNAME if you want it
-                {FACULTY NAME (IN BLOCK CAPITALS)}}
-%----------------------------------------------------------------------------------------    
 
 % The default title page, this is not used in this www.latextemplates.com version            
 \renewcommand\maketitle{
@@ -296,18 +291,8 @@
   \null\vfil
   \begin{center}
     \setlength{\parskip}{0pt}
-    {\normalsize \UNIVNAME \par} % University name in capitals
     \bigskip
     {\huge{\textit{Abstract}} \par}
-    \bigskip
-    {\normalsize \facname \par} % Faculty name
-    {\normalsize \deptname \par} % Department name
-    \bigskip
-    {\normalsize \degreename\par} % Degree name
-    \bigskip
-    {\normalsize\bf \@title \par} % Thesis title
-    \medskip
-    {\normalsize by \authornames \par} % Author name
     \bigskip
   \end{center}
 }

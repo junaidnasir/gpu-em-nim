@@ -255,6 +255,58 @@ E = mc^{2}
 
 All equations you write (which are not in the middle of paragraph text) are automatically given equation numbers by \LaTeX{}. If you don't want a particular equation numbered, just put the command, `$\backslash$\texttt{nonumber}' immediately after the equation.
 
+\subsection{Inserting Code}
+Code snippets can be inserted with the listings command. You can also specify the language for which you want to highlight your code. Here is some matlab code:
+\lstset{language=Matlab, commentstyle=\color{gray}, stringstyle=\color{red!60!black}}
+\label{App:1DFDTDFreeSpaceMatlab}
+\begin{lstlisting}
+x = -pi:.1:pi;
+y = sin(x);
+p = plot(x,y)
+set(gca,'XTick',-pi:pi/2:pi)
+set(gca,'XTickLabel',{'-pi','-pi/2','0','pi/2','pi'})
+xlabel('-\pi \leq \Theta \leq \pi')
+ylabel('sin(\Theta)')
+title('Plot of sin(\Theta)')
+\end{lstlisting}
+Here is some C++ code:
+\lstset{language=[ISO]C++, commentstyle=\color{green!50!black}, keywordstyle=\color{blue}, stringstyle=\color{red!60!black}}
+\begin{lstlisting}
+#include <iostream>
+using namespace std;
+int main(int argc, char** argv)
+{
+	cout << "Testing some code..." << endl;
+	return 0;
+}
+\end{lstlisting}
+
+\subsection{Tables}
+Here is an example of a table:
+\begin{table}[H]
+\begin{center}
+\vspace{0.3cm}
+\SingleSpacing
+	\begin{tabular}{lccc}
+	\hline \hline
+		\rule{0pt}{2.6ex} & \textbf{GeForce 6200} & \textbf{GeForce 6600} & \textbf{ATi x850}\\
+		\hline
+		Transistor Count \rule{0pt}{2.6ex} & 77 million & 222 million & 160 million\\
+		Process & 0.11 $\mu$m & 0.11 $\mu$m & 0.13 $\mu$m low--k\\
+		Pixel Shaders & 4 & 8 & 16\\
+		Vertex Shaders & 3 & 3 & 6\\
+	\hline \hline
+	\end{tabular}
+\end{center}
+\caption{Comparison of some early GPUs}
+\label{Tab:Eary-GPU-Comparison}
+\end{table}
+
+\subsection{Index}
+Key words and terms in the thesis can be indexed with the \verb|\index| directive. Indexed entries appear in the Index section. The \verb|\index| command takes a string as argument. This string is the label under which index entry is listed. Following paragraph as several words indexed.
+
+With the evolution of 3D graphics arose a need for faster computing means to handle real--time graphics processing. The graphics processing unit or GPU\index{GPU} was originally meant to act as a separate processor to handle graphics computations. The process of transforming a 3D scenario to a 2D image that can be displayed on a computer screen is known as \emph{rendering}\index{render}. Rendering involves determining the exact colour or shade of each pixel and geometry calculations. In the earliest GPUs these were referred to as pixel\index{shader!pixel} and vertex\index{shader!vertex} shading. The GPUs had discrete processing units known as pixel and vertex shaders that performed these calculations. As an example, the nVidia's\index{nVidia} GeForce 6200 GPU had four pixel shaders and three vertex shaders \cite{Ref:Geforce6-wiki}. Table \ref{Tab:Eary-GPU-Comparison} provides a comparison of some typical GPUs. The number of pixel shaders are significantly greater than vertex shaders due to unequal workload.
+
 %----------------------------------------------------------------------------------------
 
 \section{Sectioning and Subsectioning}
