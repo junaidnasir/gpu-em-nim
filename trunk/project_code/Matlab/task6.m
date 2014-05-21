@@ -1,14 +1,13 @@
 tic
 clc;
-a=15;
-for a=24:30
-    
-SIZE=2^a
-maxTime = 1024;
+a=13;
+SIZE=1024;   
+maxTime =1024;
+
 SourceSelect=1; % 0=Sinosoidal, 1=Gauassian
-if (SourceSelect==0)
-    maxTime = 5001;
-end
+% if (SourceSelect==0)
+%     maxTime = 5001;
+% end
 %Constants
 c=3e8;
 
@@ -84,23 +83,25 @@ for medium= 1:2
 		ezmq=ez(SIZE);
 		ezm1q=ez(SIZE-1);
 %         Plotting
-%         figure(1);
-%         subplot(2,1,1);
-%         plot(1:SIZE,ez);
-%         title('Electirc Component');
-%         xlim([0 SIZE]);
-%         ylim([-1.2 1.2]);
-%         if medium==2
-%             line([SIZE-500 SIZE-500],[-1.2 1.2],'Color','Red') % Medium slab line
-%         end
-%         subplot(2,1,2);
-%         plot(1:SIZE-1,hy);
-%         title('Magnetic Component');
-%         xlim([0 SIZE]);
-%         ylim([-0.005 0.005]);
-%         if medium==2
-%         line([SIZE-500 SIZE-500],[-0.005 0.005],'Color','Red') % Medium slab line
-%         end
+       if medium==2
+        figure(1);
+        subplot(2,1,1);
+        plot(1:SIZE,ez);
+        title('Electirc Component');
+        xlim([0 SIZE]);
+        ylim([-1.2 1.2]);
+        if medium==2
+            line([SIZE-500 SIZE-500],[-1.2 1.2],'Color','Red') % Medium slab line
+        end
+        subplot(2,1,2);
+        plot(1:SIZE-1,hy);
+        title('Magnetic Component');
+        xlim([0 SIZE]);
+        ylim([-0.005 0.005]);
+        if medium==2
+        line([SIZE-500 SIZE-500],[-0.005 0.005],'Color','Red') % Medium slab line
+        end
+       end
           Exz1(qTime)=ez(Z1);
           Exz2(qTime)=ez(Z2);
     end
@@ -111,61 +112,60 @@ for medium= 1:2
     end
 end
 toc
-% % Frequency Domain Analysis
-% Fs=1/delt;   %Sampling Frequency
-% T=1/Fs;      %Sample Time
-% L=maxTime;      %Length of Signal
-% time=(0:L-1)*T;    %Time Vector
-% figure(2);
-% subplot(2,1,1);
-% plot(Fs*time,Eincident)
-% title('Incident Wave');
-% xlabel('time (picoseconds)')
-% subplot(2,1,2);
-% plot(Fs*time,Etransmitted);
-% title('Transmitted Wave');
-% xlabel('time (picoseconds)')
-% % Fourrier Domain
-% NFFT = 2^nextpow2(L); % Next power of 2 from length of y
-% FEincident = fft(Eincident,NFFT)/L;
-% FEtransmitted = fft(Etransmitted,NFFT)/L;
-% f = Fs/2*linspace(0,1,NFFT/2+1);          %frequency scaling
-% % Plot single-sided amplitude spectrum.
-% figure(3);
-% subplot(2,1,1);
-% plot(f,2*abs(FEincident(1:NFFT/2+1))) 
-% xlim([0 1e11]);
-% % ylim([0 0.5]);
-% title('Single-Sided Amplitude Spectrum of Incident Wave')
-% xlabel('Frequency (Hz)')
-% ylabel('|Eincident(f)|')
-% subplot(2,1,2);
-% plot(f,2*abs(FEtransmitted(1:NFFT/2+1)))
-% xlim([0 1e11]);
-% % ylim([0 0.5]);
-% title('Single-Sided Amplitude Spectrum of Transmitted Wave')
-% xlabel('Frequency (Hz)')
-% ylabel('|Etransmitted(f)|')
-% 
-% cTransmitted=FEtransmitted/FEincident
-% cReflected=1-cTransmitted
-% eta1=sqrt(1/1);
-% eta2=sqrt(2/1);
-% Gamma=(eta2-eta1)/(eta2+eta1)
-% 
-% 
-% % eq 33
-% EXZ1 = fft(Exz1,NFFT)/L;
-% EXZ2 = fft(Exz2,NFFT)/L;
-% 
-% nFDTD = (1/(1i*k0*(z1-z2))).*log(EXZ2(1:NFFT/2+1)./EXZ1(1:NFFT/2+1));
-% figure(4);
-% plot(f(1:fspan), real(nFDTD(1:fspan)));
-% title('Refractive index re(n)');
-% xlabel('Frequency (Hz)');
-% ylabel('re(n)');
-% line([3e9 3e9],[-15 1.415],'Color','Red')
-% line([0e9 3e9],[1.415 1.415],'Color','Red')
-% 
-% ReferectiveIndex=(1/(k0*(760-750)*i))*log(FEtransmitted(760)/FEtransmitted(750))
-end
+% Frequency Domain Analysis
+Fs=1/delt;   %Sampling Frequency
+T=1/Fs;      %Sample Time
+L=maxTime;      %Length of Signal
+time=(0:L-1)*T;    %Time Vector
+figure(2);
+subplot(2,1,1);
+plot(Fs*time,Eincident)
+title('Incident Wave');
+xlabel('time (picoseconds)')
+subplot(2,1,2);
+plot(Fs*time,Etransmitted);
+title('Transmitted Wave');
+xlabel('time (picoseconds)')
+% Fourrier Domain
+NFFT = 2^nextpow2(L); % Next power of 2 from length of y
+FEincident = fft(Eincident,NFFT)/L;
+FEtransmitted = fft(Etransmitted,NFFT)/L;
+f = Fs/2*linspace(0,1,NFFT/2+1);          %frequency scaling
+% Plot single-sided amplitude spectrum.
+figure(3);
+subplot(2,1,1);
+plot(f,2*abs(FEincident(1:NFFT/2+1))) 
+xlim([0 1e11]);
+% ylim([0 0.5]);
+title('Single-Sided Amplitude Spectrum of Incident Wave')
+xlabel('Frequency (Hz)')
+ylabel('|Eincident(f)|')
+subplot(2,1,2);
+plot(f,2*abs(FEtransmitted(1:NFFT/2+1)))
+xlim([0 1e11]);
+% ylim([0 0.5]);
+title('Single-Sided Amplitude Spectrum of Transmitted Wave')
+xlabel('Frequency (Hz)')
+ylabel('|Etransmitted(f)|')
+
+cTransmitted=FEtransmitted/FEincident
+cReflected=1-cTransmitted
+eta1=sqrt(1/1);
+eta2=sqrt(2/1);
+Gamma=(eta2-eta1)/(eta2+eta1)
+
+
+% eq 33
+EXZ1 = fft(Exz1,NFFT)/L;
+EXZ2 = fft(Exz2,NFFT)/L;
+
+nFDTD = (1/(1i*k0*(z1-z2))).*log(EXZ2(1:NFFT/2+1)./EXZ1(1:NFFT/2+1));
+figure(4);
+plot(f(1:fspan), real(nFDTD(1:fspan)));
+title('Refractive index re(n)');
+xlabel('Frequency (Hz)');
+ylabel('re(n)');
+line([3e9 3e9],[-15 1.415],'Color','Red')
+line([0e9 3e9],[1.415 1.415],'Color','Red')
+
+ReferectiveIndex=(1/(k0*(760-750)*i))*log(FEtransmitted(760)/FEtransmitted(750))

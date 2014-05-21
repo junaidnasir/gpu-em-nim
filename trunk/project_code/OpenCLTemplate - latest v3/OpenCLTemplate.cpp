@@ -168,7 +168,7 @@ int COpenCLTemplate::InitialiseCL()
 	}
 	else
 	{
-//a		cout << "Running on GPU..." << endl;
+		cout << "Running on GPU..." << endl;
 		type = CL_DEVICE_TYPE_GPU;
 	}
 
@@ -380,9 +380,9 @@ int COpenCLTemplate::RunCLKernels()
 	cl_ulong kernelExecTimeNs;
 	cl_ulong kernelExecTimeNsT = 0;
 
-	//cout << "Launching CL Kernel..." << endl;
-	//cout << "Global threads: " << globalThreads[0] << "x" << globalThreads[1] << endl;
-	//cout << "Local threads: " << localThreads[0] << "x" << localThreads[1] << endl;
+	cout << "Launching CL Kernel..." << endl;
+	cout << "Global threads: " << globalThreads[0] << "x" << globalThreads[1] << endl;
+	cout << "Local threads: " << localThreads[0] << "x" << localThreads[1] << endl;
 
 	for (int medium=1; medium<=2; medium++)
 	{  
@@ -390,11 +390,11 @@ int COpenCLTemplate::RunCLKernels()
 		// -------- Medium Specifications -------- 
 		if (medium==1)
 		{
-//a			cout<<"Calculating Wave propagation in Free Space"<<endl;
+			cout<<"Calculating Wave propagation in Free Space"<<endl;
 		}
 		else
 		{
-//a			cout<<"Calculating Wave propagation in denser Medium"<<endl;
+			cout<<"Calculating Wave propagation in denser Medium"<<endl;
 			int j;
 			for(j=0; j<SIZE-(SIZE/2); j++)		//epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; // half medium
 				epsilon[j] = 8.8542e-012;
@@ -480,8 +480,8 @@ int COpenCLTemplate::RunCLKernels()
 			Etransmitted[i] = Etemp[i];
 		}
   }
-/*
-//a	cout<<"Writing Values to files"<<endl;
+
+	cout<<"Writing Values to files"<<endl;
 	stream.str(std::string());
 	stream<<"./results/"<<"Eincident"<<".jd";
 	filename = stream.str();
@@ -541,7 +541,7 @@ int COpenCLTemplate::RunCLKernels()
 	snapshot.write((char *)&z1,(sizeof(PRECISION)));
 	snapshot.write((char *)&z2,(sizeof(PRECISION)));
 	snapshot.close();
-	*/
+	
 	return 0;
 }
 int COpenCLTemplate::CompleteRun()
