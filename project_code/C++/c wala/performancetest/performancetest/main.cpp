@@ -19,9 +19,8 @@ float GetElapsedTime();
 void main()
 {
 	
-	for (int a=22;a<25;a++)
-	{
-	tStart = GetTimeus64();
+	int	a=10;
+	
 	// -------- Save to file Variables -------- 
 	fstream snapshot;
 	std::string filename ;
@@ -30,17 +29,18 @@ void main()
 	CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
 	double temp=pow(2.,a);
 	int SIZE=temp;
-	cout<<SIZE<<endl;
+//	cout<<SIZE<<endl;
     int maxTime = 1024;
 	int SourceSelect = 1; 			// 0=Sinosoidal, 1=Gauassian
-	/*cout<<"----Select Source----"<<endl;
+	cout<<"----Select Source----"<<endl;
 	cout<<"0)Sinosoidal 1) Gauassian"<<endl;
 	do{
 		cin>>SourceSelect;
 	}while(SourceSelect != 1 && SourceSelect != 0);
 	if (SourceSelect == 0)
 		maxTime = 5001;
-*/
+
+	tStart = GetTimeus64();
 	// -------- Constants -------- 
 	double c = 3e8;
 
@@ -111,13 +111,13 @@ void main()
 		// -------- Medium Specifications -------- 
 		if (medium==1)
 		{
-//			cout<<"Calculating Wave propagation in Free Space"<<endl;
+			cout<<"Calculating Wave propagation in Free Space"<<endl;
 			for(int j=0; j<SIZE; j++)
 				epsilon[j] = 8.8542e-012;   						//epsilon=8.8542e-012*ones(1,SIZE); // free space
 		}
 		else
 		{
-//			cout<<"Calculating Wave propagation in denser Medium"<<endl;
+			cout<<"Calculating Wave propagation in denser Medium"<<endl;
 			int j;
 			for(j=0; j<SIZE-500; j++)								//epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; // half medium
 				epsilon[j] = 8.8542e-012;
@@ -157,7 +157,9 @@ void main()
 			Exz1[qTime] = ez[Z1-1];
 	        Exz2[qTime] = ez[Z2-1];
 
-	        // -------- Saving to file -------- 
+	        // -------- Saving to file --------
+			if(qTime % 20 ==0)
+			{
 			stream.str(std::string());   						// clear stringstream
 			stream<<"./results/"<<"Efield"<<medium<<"_"<<qTime<<".jd";   		// concatenate
 			filename = stream.str();		 					// copy string
@@ -165,6 +167,7 @@ void main()
 			for (mm = 0; mm < SIZE; mm++)
 				snapshot.write((char *)&ez[mm],sizeof(double));
 			snapshot.close();
+			}
 		} //end qTime
 
 		if (medium==1)
@@ -180,7 +183,7 @@ void main()
 		
 	} //end medium loop
 	
-//	cout<<"Writing Values to files"<<endl;
+	cout<<"Writing Values to files"<<endl;
 	stream.str(std::string());
 	stream<<"./results/"<<"Eincident"<<".jd";
 	filename = stream.str();
@@ -251,7 +254,6 @@ void main()
 	delete[] Exz2;
 	tStart=0;
 	tEnd=0;
-	}
 	cin>>time;
 }
 

@@ -17,9 +17,8 @@ int main(int argc, char * argv[])
    int maxTime = 1024;
    float time=0;
    int i=10;
-while(i<=24)
-{
-	SIZE = pow(2,i);
+
+	SIZE = 1024;
 	COpenCLTemplate OpenCLTemplateSim(maxTime, SIZE);
 	// ================== Simulation ================
 	OpenCLTemplateSim.StartTimer();
@@ -35,7 +34,7 @@ while(i<=24)
 	snapshot.write((char *)&maxTime,(sizeof(int)));
 	snapshot.write((char *)&time,(sizeof(float)));
 	snapshot.close();*/
-	i++;
-}
+
+
 	return 0;
 }

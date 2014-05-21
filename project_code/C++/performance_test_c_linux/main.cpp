@@ -22,7 +22,7 @@ float GetElapsedTime();
 int main()
 {
 	
-	for (int a=10;a<25;a++)
+	for (int a=16;a<25;a++)
 	{
 	tStart = GetTimeus64();
 	// -------- Save to file Variables -------- 
@@ -32,9 +32,10 @@ int main()
 //	stream<<"results";
 //	CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
 	double temp=pow(2.,a);
-	int SIZE=temp;
-	cout<<SIZE<<endl;
-    int maxTime = 1024;
+	int SIZE=8192;
+	
+    int maxTime = temp;
+	cout<<temp<<endl;
 	int SourceSelect = 1; 			// 0=Sinosoidal, 1=Gauassian
 	/*cout<<"----Select Source----"<<endl;
 	cout<<"0)Sinosoidal 1) Gauassian"<<endl;
@@ -131,6 +132,8 @@ int main()
 		// -------- Main Loop -------- 
 		for (int qTime=0; qTime<(maxTime-1); qTime++)
 		{
+			
+			cout<<qTime<<endl;
 			for(int nn=0; nn<(SIZE-1); nn++)
 			{
 				hy[nn] = hy[nn] + (ez[nn+1] - ez[nn]) * (delt/(delx*mu[nn]));				//Update Magnetic field
@@ -159,7 +162,7 @@ int main()
 			ezm1q= ez[SIZE-2];
 			Exz1[qTime] = ez[Z1-1];
 	        Exz2[qTime] = ez[Z2-1];
-	if (qTime %20==0)
+	/*if (qTime %20==0)
 	{
 	        // -------- Saving to file -------- 
 			stream.str(std::string());   						// clear stringstream
@@ -169,7 +172,7 @@ int main()
 			for (mm = 0; mm < SIZE; mm++)
 				snapshot.write((char *)&ez[mm],sizeof(double));
 			snapshot.close();
-	}
+	}*/
 		} //end qTime
 
 		if (medium==1)
@@ -185,7 +188,7 @@ int main()
 		
 	} //end medium loop
 	
-//	cout<<"Writing Values to files"<<endl;
+/*	cout<<"Writing Values to files"<<endl;
 	stream.str(std::string());
 	stream<<"./results/"<<"Eincident"<<".jd";
 	filename = stream.str();
@@ -234,7 +237,7 @@ int main()
 	snapshot.write((char *)&z1,(sizeof(double)));
 	snapshot.write((char *)&z2,(sizeof(double)));
 	snapshot.close();
-
+*/
 	cout<<endl;
 	//cout<<"Enter anything to exit"<<endl;
 	//cin>>SourceSelect;

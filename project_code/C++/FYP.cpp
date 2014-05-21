@@ -25,7 +25,7 @@ void main()
 	float Sc = c * delt / delx;
 	int epsilonr = 1;
 	int mur = 1;
-    // Incident and Refelected Waves Variables
+    // Incident and Reflected Waves Variables
 	int **Eincident;
 	Eincident = new int* [1] ; //1 x maxtime
 	Eincident[0] = new int [maxTime];
