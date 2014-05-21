@@ -195,15 +195,31 @@
 %	defined as \examname above so you cite it as \examname
 %----------------------------------------------------------------------------------------
 
+<<<<<<< .mine
+\thesistitle{GPU implementation of EM waves in NIM using FDTD} % Your thesis title - this is used in the title and abstract
+=======
 \thesistitle{Thesis Title} % Your thesis title - this is used in the title
+>>>>>>> .r71
 %-------------------------------------------------  
+<<<<<<< .mine
+\supervisor{Attique \textsc{Dawood}} % You supervisor's name - this is used in the title page
+=======
 \supervisor{Dr. FirstName SecondName} % You supervisor's name - this is used in the title page
+>>>>>>> .r71
 %-------------------------------------------------   
 \examiner{} % Your examiner's name - this is not currently used anywhere in the template, cite it with \examname if you want it
 %-------------------------------------------------   
+<<<<<<< .mine
+\degree{Bachelors of Science (BSEE)} % Your degree name - this is currently used in the title page and abstract
+=======
 \degree{Bachelor of Science} % Your degree name - this is currently used in the title page
+>>>>>>> .r71
 %-------------------------------------------------   
+<<<<<<< .mine
+\authors{Muhammad Junaid \textsc{Nasir}} % Your name - this is used in the title page and abstract
+=======
 \authors{Author 1, Author 2 and Author 3} % Your name - this is used in the title page
+>>>>>>> .r71
 %-------------------------------------------------   
 \addresses{} % Your address - this is not currently used anywhere in the template, cite it with \addressnames if you want it
 %-------------------------------------------------   
@@ -211,15 +227,33 @@
 %-------------------------------------------------   
 \keywords{} % Keywords for your thesis - this is not currently used anywhere in the template, cite it with \keywordnames if you want it
 %-------------------------------------------------   
+<<<<<<< .mine
+\university{\texorpdfstring{\href{http://www.nu.edu.pk} % Your university's URL
+                {National University of Compter and Emerging Sciences}} % Your university's name - this is currently used in the title page
+                {NUCES-FAST}}
+=======
 \university{\texorpdfstring{{National University of Computer \& Emerging Sciences}} % Your university's name - this is currently used in the title page
                 {National University of Computer \& Emerging Sciences}}
+>>>>>>> .r71
 %-------------------------------------------------   
+<<<<<<< .mine
+\UNIVERSITY{\texorpdfstring{\href{University Web Site URL Here (include http://www.nu.edu.pk)} % Your university's URL
+                {NATIONAL UNIVERSITY OF COMPUTER AND EMERGING SCIENCES}} % Your university's name in capitals - this is currently used in the abstract page
+                {NUCES-FAST}}
+=======
 \UNIVERSITY{\texorpdfstring{{NATIONAL UNIVERSITY OF COMPUTER \& EMERGING SCIENCES}} % Your university's name in capitals - this is currently used in the abstract page
                 {NATIONAL UNIVERSITY OF COMPUTER \& EMERGING SCIENCES}}
+>>>>>>> .r71
 %-------------------------------------------------                
+<<<<<<< .mine
+\department{\texorpdfstring{\href{Department or School Web Site URL Here (include http://)} % Your department's URL
+                {Department of Electrical Engineering}} % Your department's name - used in the title page and abstract
+                {Department of Electrical Engineering}}
+=======
 \department{\texorpdfstring{
                 {Department of Electrical Engineering}} % Your department's name - used in the title page and abstract
                 {Department of Electrical Engineering}}
+>>>>>>> .r71
 %-------------------------------------------------                
 \DEPARTMENT{\texorpdfstring{
                 {DEPARTMENT OF ELECTRICAL ENGINEERING}} % Your department's name in capitals - this is not currently used anywhere in the template, cite it with \DEPTNAME if you want it
