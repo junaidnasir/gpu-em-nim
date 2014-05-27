@@ -14,7 +14,7 @@ c=3e8;
 % ideal Condition --> Sc= c*delt/delx = 1
 % f=3Ghz, lambda=c/f=0.1m, for 4 wavelengths, dx=0.4/(maxtime=1000)
 PulseWidth=800;
-f=3e9;
+f=3e9;      % 3GHz
 w=2*pi*f;    % omega
 k0=w/c     ; % free space wave number constant
 lambda=c/f;
@@ -24,7 +24,27 @@ delt=delx/c;
 Sc=c*delt/delx;
 epsilonr=1;
 mur=1;
-
+mu_nought=1.2566e-006;
+epsilon_nought=8.8542e-012;
+% Drudes model variables
+mu_inf=1;
+epsilon_inf=1;
+omega_pe2= 4*pi*pi*f*f*(epsilon_inf-epsilonr);%Plasma frequency electric squared
+omega_pm2= 4*pi*pi*f*f*(mu_inf-mur);%Plasma frequency magnetic squared
+ro_m=0;
+ro_e=0;
+m_divide=((4*mu_nought*mu_inf)+(mu_nought*omega_pm2*(delt*delt))+(mu_nought*mu_inf*ro_m*(2*delt)));
+am= 4/m_divide;
+bm= (ro_m*2*delt)/m_divide;
+cm= (4*mu_nought*mu_inf)/m_divide;
+dm= (-mu_nought*omega_pm2*delt*delt)/m_divide;
+em= (mu_nought*mu_inf*ro_m*2*delt)/m_divide;
+e_divide=((4*epsilon_nought*epsilon_inf)+(epsilon_nought*omega_pe2*(delt*delt))+(epsilon_nought*epsilon_inf*ro_e*(2*delt)));
+ae= 4/m_divide;
+be= (ro_e*2*delt)/m_divide;
+ce= (4*epsilon_nought*epsilon_inf)/m_divide;
+de= (-epsilon_nought*omega_pe2*delt*delt)/m_divide;
+ee= (epsilon_nought*epsilon_inf*ro_e*2*delt)/m_divide;
 
 % Incident and Refelected Waves Variables
 Eincident=0;
@@ -33,9 +53,9 @@ Etemp=zeros(1,maxTime);
 
 
 % refractive index variables
-Z1 = 750;
+Z1 = (SIZE/2)+250;
 z1 = Z1*delx;
-Z2 = 760;
+Z2 = (SIZE/2)+260;
 z2 = Z2*delx;
 Exz1 = zeros(maxTime,1); % record Electric field at 750
 Exz2 = zeros(maxTime,1); % record electric field at 760
@@ -57,36 +77,37 @@ for medium= 1:2
     if medium==1
         epsilon=8.8542e-012*ones(1,SIZE); % free space
     else
-        epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; % half medium
+        epsilon=[8.8542e-012*ones(1,SIZE-(SIZE/2)) 1.7708e-011*ones(1,(SIZE/2))]; % half medium
     end
     for qTime = 1:(maxTime-1)
 %        Update By
-    	for  mm = 1:(SIZE-1)
+        for  mm = 1:(SIZE-1)
             by(mm) = by(mm) + ((ez(mm) - ez(mm+1)) * (delt/(delx)));
         end
+%        Update Magnetic field
+        for  mm = 2:(SIZE-1)  %changed it from 1 to 2 because of by(0) index problem at 1
+            hy(mm) = (am*(by(mm+1)-2*by(mm)+by(mm-1)))+(bm*(by(mm+1)-by(mm-1)))+(cm*((2*hy(mm))-(hy(mm-1))))+(dm*((2*hy(mm))+(hy(mm-1))))+(em*(hy(mm-1)));
+        end
+        
 %         Update Dz
         for mm = 2:(SIZE-1)
             dz(mm) = dz(mm) + ((hy(mm-1) - hy(mm)) * (delt/delx));
         end
-%        Update Magnetic field
-    	for  mm = 1:(SIZE-1)
-            hy(mm) = hy(mm) + (ez(mm + 1) - ez(mm)) * (delt/(delx*mu(mm)));
-        end
 %         Update Electrical filed
         for mm = 2:(SIZE-1)
-            ez(mm) = ez(mm) + (hy(mm) - hy(mm - 1)) * (delt/(delx*epsilon(mm))) ;
+            ez(mm) = (ae*(dz(mm+1)-2*dz(mm)+dz(mm-1)))+(be*(dz(mm+1)-dz(mm-1)))+(ce*((2*ez(mm))-(ez(mm-1))))+(de*((2*ez(mm))+(ez(mm-1))))+(ee*(ez(mm-1)));
         end
-        Etemp(qTime)= ez(SIZE-498); %just after boundary of medium
+        Etemp(qTime)= ez(SIZE-(SIZE/2)+2); %just after boundary of medium
         if SourceSelect==0
 %         Source node (hard coded)
 		    ez(2) = ez(2)+ (sin(2*pi*(qTime)*f*delt)*Sc);
-		else
+         else
 		    ez(2) = ez(2)+exp(-(qTime - 30) * (qTime - 30) / (PulseWidth./4));
-		end
+        end
 %         Absorbing Boundary Conditions
         ez(1)=ez2q+(ez(2)-ez1q)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
         ez(SIZE)=ezm1q+(ez(SIZE-1)-ezmq)*(((Sc/(mur*(epsilonr))^0.5)-1)/((Sc/(mur*(epsilonr))^0.5)+1));
-        dz(SIZE)=epsilonr*epsilon; %epsilon nough
+        dz(SIZE)=epsilonr*epsilon_nought; %epsilon nough
 %         Saving q-1 (pervious step time values) for boundary Conditions
 		ez2q=ez(2);
 		ez1q=ez(1);
@@ -95,22 +116,22 @@ for medium= 1:2
 %         Plotting
        if medium==2
         figure(1);
-        subplot(2,1,1);
+%         subplot(2,1,1);
         plot(1:SIZE,ez);
         title('Electirc Component');
-        xlim([0 SIZE]);
-        ylim([-1.2 1.2]);
-        if medium==2
-            line([SIZE-500 SIZE-500],[-1.2 1.2],'Color','Red') % Medium slab line
-        end
-        subplot(2,1,2);
-        plot(1:SIZE-1,hy);
-        title('Magnetic Component');
-        xlim([0 SIZE]);
-        ylim([-0.005 0.005]);
-        if medium==2
-        line([SIZE-500 SIZE-500],[-0.005 0.005],'Color','Red') % Medium slab line
-        end
+%         xlim([0 SIZE]);
+%         ylim([-1.2 1.2]);
+%         if medium==2
+            line([SIZE-(SIZE/2) SIZE-(SIZE/2)],[-1.2 1.2],'Color','Red') % Medium slab line
+%         end
+%         subplot(2,1,2);
+%         plot(1:SIZE-1,hy);
+%         title('Magnetic Component');
+%         xlim([0 SIZE]);
+%         ylim([-0.005 0.005]);
+%         if medium==2
+%         line([SIZE-500 SIZE-500],[-0.005 0.005],'Color','Red') % Medium slab line
+%         end
        end
           Exz1(qTime)=ez(Z1);
           Exz2(qTime)=ez(Z2);
