@@ -64,9 +64,17 @@ fspan = 100; % Points to plot in frequency domain
 for medium= 1:2
     % Temp Variable
     ez=zeros(1,SIZE);
+    ezn_0=zeros(1,SIZE-1);
+    ezn_1=zeros(1,SIZE-1);
     hy=zeros(1,SIZE-1);
+    hyn_0=zeros(1,SIZE-1);
+    hyn_1=zeros(1,SIZE-1);
     by=zeros(1,SIZE);
+    byn_0=zeros(1,SIZE);
+    byn_1=zeros(1,SIZE);
     dz=zeros(1,SIZE);
+    dzn_0=zeros(1,SIZE);
+    dzn_1=zeros(1,SIZE);
     mm=0;
     ez1q=0;
     ez2q=0;
@@ -80,13 +88,21 @@ for medium= 1:2
         epsilon=[8.8542e-012*ones(1,SIZE-(SIZE/2)) 1.7708e-011*ones(1,(SIZE/2))]; % half medium
     end
     for qTime = 1:(maxTime-1)
+        hyn_1=hyn_0;
+        hyn_0=hy;
+        byn_1=byn_0;
+        byn_0=by;
+        ezn_1=ezn_0;
+        ezn_0=ez;
+        dzn_1=dzn_0;
+        dzn_0=dz;
 %        Update By
         for  mm = 1:(SIZE-1)
             by(mm) = by(mm) + ((ez(mm) - ez(mm+1)) * (delt/(delx)));
         end
 %        Update Magnetic field
         for  mm = 2:(SIZE-1)  %changed it from 1 to 2 because of by(0) index problem at 1
-            hy(mm) = (am*(by(mm+1)-2*by(mm)+by(mm-1)))+(bm*(by(mm+1)-by(mm-1)))+(cm*((2*hy(mm))-(hy(mm-1))))+(dm*((2*hy(mm))+(hy(mm-1))))+(em*(hy(mm-1)));
+            hy(mm) = (am*(by(mm)-2*byn_0(mm)+byn_1(mm)))+(bm*(by(mm)-byn_1(mm)))+(cm*((2*hyn_0(mm))-(hyn_1(mm))))+(dm*((2*hyn_0(mm))+(hyn_1(mm))))+(em*(hyn_1(mm)));
         end
         
 %         Update Dz
@@ -95,7 +111,7 @@ for medium= 1:2
         end
 %         Update Electrical filed
         for mm = 2:(SIZE-1)
-            ez(mm) = (ae*(dz(mm+1)-2*dz(mm)+dz(mm-1)))+(be*(dz(mm+1)-dz(mm-1)))+(ce*((2*ez(mm))-(ez(mm-1))))+(de*((2*ez(mm))+(ez(mm-1))))+(ee*(ez(mm-1)));
+            ez(mm) = (ae*(dz(mm)-2*dzn_0(mm)+dzn_1(mm)))+(be*(dz(mm)-dzn_1(mm)))+(ce*((2*ezn_0(mm))-(ezn_1(mm))))+(de*((2*ezn_0(mm))+(ezn_1(mm))))+(ee*(ezn_1(mm)));
         end
         Etemp(qTime)= ez(SIZE-(SIZE/2)+2); %just after boundary of medium
         if SourceSelect==0
@@ -122,7 +138,7 @@ for medium= 1:2
 %         xlim([0 SIZE]);
 %         ylim([-1.2 1.2]);
 %         if medium==2
-            line([SIZE-(SIZE/2) SIZE-(SIZE/2)],[-1.2 1.2],'Color','Red') % Medium slab line
+%             line([SIZE-(SIZE/2) SIZE-(SIZE/2)],[-1.2 1.2],'Color','Red') % Medium slab line
 %         end
 %         subplot(2,1,2);
 %         plot(1:SIZE-1,hy);
