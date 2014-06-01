@@ -1,7 +1,7 @@
 clc;
 a=13;
 SIZE=1024;   
-maxTime =4*1024;
+maxTime =10*1024;
 
 SourceSelect=2; % 0=Sinosoidal, 1=Gauassian
 % if (SourceSelect==0)
@@ -87,8 +87,8 @@ for medium= 1:2
         epsilonr=1;
         mur=1;
     else
-        epsilon=[-8.8542e-012*ones(1,SIZE-(SIZE/2)) -1.7708e-011*ones(1,(SIZE/2))]; % half medium
-        mu=-1.2566e-006*ones(1,SIZE);
+        epsilon=[8.8542e-012*ones(1,SIZE-(SIZE/2)) -8.8542e-012*ones(1,(SIZE/2))]; % half medium
+        mu=[1.2566e-006*ones(1,SIZE-(SIZE/2)) -1.2566e-006*ones(1,(SIZE/2))];
         epsilonr=-1;
         mur=-1;
     end
@@ -137,14 +137,14 @@ for medium= 1:2
 		ezm1q=ez(SIZE-1);
 %         Plotting
 %        if medium==2
-        figure(1);
+%         figure(1);
 %         subplot(2,1,1);
-        plot(1:SIZE,ez);
-        title('Electirc Component');
-        xlim([0 SIZE]);
+%         plot(1:SIZE,ez);
+%         title('Electirc Component');
+%         xlim([0 SIZE]);
 %         ylim([-1.2 1.2]);
 %         if medium==2
-            line([SIZE-(SIZE/2) SIZE-(SIZE/2)],[-1.2 1.2],'Color','Red') % Medium slab line
+%             line([SIZE-(SIZE/2) SIZE-(SIZE/2)],[-1.2 1.2],'Color','Red') % Medium slab line
 %         end
 %         subplot(2,1,2);
 %         plot(1:SIZE-1,hy);
@@ -223,4 +223,4 @@ ylabel('re(n)');
 line([3e9 3e9],[-15 1.415],'Color','Red')
 line([0e9 3e9],[1.415 1.415],'Color','Red')
 
-ReferectiveIndex=(1/(k0*(760-750)*i))*log(FEtransmitted(760)/FEtransmitted(750))
+ReferectiveIndex=(1/(k0*(Z2-Z1)*i))*log(FEtransmitted(Z2)/FEtransmitted(Z1))
