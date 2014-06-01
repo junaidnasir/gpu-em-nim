@@ -5,7 +5,7 @@ a=13;
 SIZE=1048;   
 maxTime =5*SIZE;
 
-SourceSelect=0; % 0=Sinosoidal, 1=Gauassian
+SourceSelect=1; % 0=Sinosoidal, 1=Gauassian
 % if (SourceSelect==0)
 %     maxTime = 5001;
 % end
@@ -130,12 +130,17 @@ for medium= 1:2
         Etemp(qTime)= ez(SIZE-(SIZE/2)+2); %just after boundary of medium
         if SourceSelect==0
 %         Source node (hard coded)
-		    ez(2) = ez(2)+ (sin(2*pi*(qTime)*f*delt)*Sc);
+% 		    ez(2) = ez(2)+ (sin(2*pi*(qTime)*f*delt)*Sc);
+%          else
+% 		    ez(2) = ez(2)+exp(-(qTime - 30) * (qTime - 30) / (PulseWidth./4));
+            ez(1) = (sin(2*pi*(qTime)*f*delt)*Sc);
+            dz(1)=epsilonr(1)*epsilon_nought*ez(1);
          else
-		    ez(2) = ez(2)+exp(-(qTime - 30) * (qTime - 30) / (PulseWidth./4));
+            ez(1)= exp(-(qTime - 30) * (qTime - 30) / (PulseWidth./4));
+            dz(1)=epsilonr(1)*epsilon_nought*ez(1);
         end
 %         Absorbing Boundary Conditions
-        ez(1)=ez2q+(ez(2)-ez1q)*(((Sc/(mur(1)*(epsilonr(1)))^0.5)-1)/((Sc/(mur(1)*(epsilonr(1)))^0.5)+1));
+%         ez(1)=ez2q+(ez(2)-ez1q)*(((Sc/(mur(1)*(epsilonr(1)))^0.5)-1)/((Sc/(mur(1)*(epsilonr(1)))^0.5)+1));
         ez(SIZE)=ezm1q+(ez(SIZE-1)-ezmq)*(((Sc/(mur(1)*(epsilonr(1)))^0.5)-1)/((Sc/(mur(1)*(epsilonr(1)))^0.5)+1));
         dz(SIZE)=epsilonr(1)*epsilon_nought; %epsilon nough
 %         Saving q-1 (pervious step time values) for boundary Conditions
@@ -144,7 +149,7 @@ for medium= 1:2
 		ezmq=ez(SIZE);
 		ezm1q=ez(SIZE-1);
 %         Plotting
-       if mod(qTime,10)==0
+       if mod(qTime,5)==0
        if medium==2
         figure(1);
 %         subplot(2,1,1);
@@ -153,8 +158,8 @@ for medium= 1:2
         xlim([0 SIZE]);
 %         ylim([-1.2 1.2]);
 %         if medium==2
-            line([SIZE-(SIZE/2) SIZE-(SIZE/2)],[-50 50],'Color','Red') % Medium slab line
-            line([SIZE-(SIZE/4) SIZE-(SIZE/4)],[-50 50],'Color','Red') % Medium slab line
+            line([SIZE-(SIZE/2) SIZE-(SIZE/2)],[-2 2],'Color','Red') % Medium slab line
+            line([SIZE-(SIZE/4) SIZE-(SIZE/4)],[-2 2],'Color','Red') % Medium slab line
 %         end
        end
        end
