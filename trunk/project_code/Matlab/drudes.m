@@ -1,7 +1,7 @@
 clc;
 a=13;
 SIZE=1024;   
-maxTime =10*1024;
+maxTime =30*1024;
 
 SourceSelect=2; % 0=Sinosoidal, 1=Gauassian
 % if (SourceSelect==0)
@@ -27,24 +27,6 @@ mur=-1;
 mu_nought=1.2566e-006;
 epsilon_nought=8.8542e-012;
 % Drudes model variables
-mu_inf=1;
-epsilon_inf=1;
-omega_pe2= 4*pi*pi*f*f*(epsilon_inf-epsilonr);%Plasma frequency electric squared
-omega_pm2= 4*pi*pi*f*f*(mu_inf-mur);%Plasma frequency magnetic squared
-ro_m=0;
-ro_e=0;
-m_divide=((4*mu_nought*mu_inf)+(mu_nought*omega_pm2*(delt*delt))+(mu_nought*mu_inf*ro_m*(2*delt)));
-am= 4/m_divide;
-bm= (ro_m*2*delt)/m_divide;
-cm= (4*mu_nought*mu_inf)/m_divide;
-dm= (-mu_nought*omega_pm2*delt*delt)/m_divide;
-em= (mu_nought*mu_inf*ro_m*2*delt)/m_divide;
-e_divide=((4*epsilon_nought*epsilon_inf)+(epsilon_nought*omega_pe2*(delt*delt))+(epsilon_nought*epsilon_inf*ro_e*(2*delt)));
-ae= 4/e_divide;
-be= (ro_e*2*delt)/e_divide;
-ce= (4*epsilon_nought*epsilon_inf)/e_divide;
-de= (-epsilon_nought*omega_pe2*delt*delt)/e_divide;
-ee= (epsilon_nought*epsilon_inf*ro_e*2*delt)/e_divide;
 
 % Incident and Refelected Waves Variables
 Eincident=0;
@@ -62,6 +44,37 @@ Exz2 = zeros(maxTime,1); % record electric field at 760
 fspan = 100; % Points to plot in frequency domain
 
 for medium= 1:2
+    % Medium Specifications
+    if medium==1
+        mu=1.2566e-006*ones(1,SIZE);   %permeability of free sapce
+        epsilon=8.8542e-012*ones(1,SIZE); % free space
+        epsilonr=1;
+        mur=1;
+    else
+        epsilon=[8.8542e-012*ones(1,SIZE-(SIZE/2)) -8.8542e-012*ones(1,(SIZE/2))]; % half medium
+        mu=[1.2566e-006*ones(1,SIZE-(SIZE/2)) -1.2566e-006*ones(1,(SIZE/2))];
+        epsilonr=-1;
+        mur=-1;
+    end
+    mu_inf=1;
+    epsilon_inf=1;
+    omega_pe2= 4*pi*pi*f*f*(epsilon_inf-epsilonr);%Plasma frequency electric squared
+    omega_pm2= 4*pi*pi*f*f*(mu_inf-mur);%Plasma frequency magnetic squared
+    ro_m=0;
+    ro_e=0;
+    m_divide=((4*mu_nought*mu_inf)+(mu_nought*omega_pm2*(delt*delt))+(mu_nought*mu_inf*ro_m*(2*delt)));
+    am= 4/m_divide;
+    bm= (ro_m*2*delt)/m_divide;
+    cm= (4*mu_nought*mu_inf)/m_divide;
+    dm= (-mu_nought*omega_pm2*delt*delt)/m_divide;
+    em= (mu_nought*mu_inf*ro_m*2*delt)/m_divide;
+    e_divide=((4*epsilon_nought*epsilon_inf)+(epsilon_nought*omega_pe2*(delt*delt))+(epsilon_nought*epsilon_inf*ro_e*(2*delt)));
+    ae= 4/e_divide;
+    be= (ro_e*2*delt)/e_divide;
+    ce= (4*epsilon_nought*epsilon_inf)/e_divide;
+    de= (-epsilon_nought*omega_pe2*delt*delt)/e_divide;
+    ee= (epsilon_nought*epsilon_inf*ro_e*2*delt)/e_divide;
+
     % Temp Variable
     ez=zeros(1,SIZE);
     ezn_0=zeros(1,SIZE-1);
@@ -80,18 +93,7 @@ for medium= 1:2
     ez2q=0;
     ezmq=0;
     ezm1q=0;
-    % Medium Specifications
-    if medium==1
-        mu=1.2566e-006*ones(1,SIZE);   %permeability of free sapce
-        epsilon=8.8542e-012*ones(1,SIZE); % free space
-        epsilonr=1;
-        mur=1;
-    else
-        epsilon=[8.8542e-012*ones(1,SIZE-(SIZE/2)) -8.8542e-012*ones(1,(SIZE/2))]; % half medium
-        mu=[1.2566e-006*ones(1,SIZE-(SIZE/2)) -1.2566e-006*ones(1,(SIZE/2))];
-        epsilonr=-1;
-        mur=-1;
-    end
+    
     for qTime = 1:(maxTime-1)
         hyn_1=hyn_0;
         hyn_0=hy;
