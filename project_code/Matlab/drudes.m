@@ -1,9 +1,9 @@
 clc;
 a=13;
 SIZE=1024;   
-maxTime =30*1024;
+maxTime =20*1024;
 
-SourceSelect=2; % 0=Sinosoidal, 1=Gauassian
+SourceSelect=1; % 0=Sinosoidal, 1=Gauassian
 % if (SourceSelect==0)
 %     maxTime = 5001;
 % end
@@ -111,14 +111,12 @@ for medium= 1:2
         for  mm = 1:(SIZE-1)  %changed it from 1 to 2 because of by(0) index problem at 1
             hy(mm) = (am*(by(mm)-2*byn_0(mm)+byn_1(mm)))+(bm*(by(mm)-byn_1(mm)))+(cm*((2*hyn_0(mm))-(hyn_1(mm))))+(dm*((2*hyn_0(mm))+(hyn_1(mm))))+(em*(hyn_1(mm)));
         end
-        
 %         Update Dz
         for mm = 2:(SIZE-1)
             dz(mm) = dz(mm) + ((hy(mm-1) - hy(mm)) * (delt/delx));
         end
 %         Update Electrical filed
         for mm = 2:(SIZE-1)
-%             ez(mm) = (ae*(dz(mm)-2*dzn_0(mm)+dzn_1(mm)))+(be*(dz(mm)-dzn_1(mm)))+(ce*((2*ezn_0(mm))-ezn_1(mm)))+(de*((2*ezn_0(mm))+ezn_1(mm)))+(ee*ezn_1(mm));
             ez(mm) = (ae*(dz(mm)-(2*dzn_0(mm))+dzn_1(mm)))+(be*(dz(mm)-dzn_1(mm)))+(ce*((2*ezn_0(mm))-ezn_1(mm)))+(de*((2*ezn_0(mm))+ezn_1(mm)))+(ee*ezn_1(mm));
         end
         Etemp(qTime)= ez(SIZE-(SIZE/2)+2); %just after boundary of medium
