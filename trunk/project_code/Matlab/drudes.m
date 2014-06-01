@@ -1,9 +1,9 @@
 clc;
 a=13;
 SIZE=1024;   
-maxTime =1024;
+maxTime =4*1024;
 
-SourceSelect=1; % 0=Sinosoidal, 1=Gauassian
+SourceSelect=2; % 0=Sinosoidal, 1=Gauassian
 % if (SourceSelect==0)
 %     maxTime = 5001;
 % end
@@ -22,8 +22,8 @@ delx=(4*lambda)/SIZE;
 % so dt=dx/c=1.333e-12
 delt=delx/c;
 Sc=c*delt/delx;
-epsilonr=1;
-mur=1;
+epsilonr=-1;
+mur=-1;
 mu_nought=1.2566e-006;
 epsilon_nought=8.8542e-012;
 % Drudes model variables
@@ -40,11 +40,11 @@ cm= (4*mu_nought*mu_inf)/m_divide;
 dm= (-mu_nought*omega_pm2*delt*delt)/m_divide;
 em= (mu_nought*mu_inf*ro_m*2*delt)/m_divide;
 e_divide=((4*epsilon_nought*epsilon_inf)+(epsilon_nought*omega_pe2*(delt*delt))+(epsilon_nought*epsilon_inf*ro_e*(2*delt)));
-ae= 4/m_divide;
-be= (ro_e*2*delt)/m_divide;
-ce= (4*epsilon_nought*epsilon_inf)/m_divide;
-de= (-epsilon_nought*omega_pe2*delt*delt)/m_divide;
-ee= (epsilon_nought*epsilon_inf*ro_e*2*delt)/m_divide;
+ae= 4/e_divide;
+be= (ro_e*2*delt)/e_divide;
+ce= (4*epsilon_nought*epsilon_inf)/e_divide;
+de= (-epsilon_nought*omega_pe2*delt*delt)/e_divide;
+ee= (epsilon_nought*epsilon_inf*ro_e*2*delt)/e_divide;
 
 % Incident and Refelected Waves Variables
 Eincident=0;
@@ -81,11 +81,16 @@ for medium= 1:2
     ezmq=0;
     ezm1q=0;
     % Medium Specifications
-    mu=1.2566e-006*ones(1,SIZE);   %permeability of free sapce
     if medium==1
+        mu=1.2566e-006*ones(1,SIZE);   %permeability of free sapce
         epsilon=8.8542e-012*ones(1,SIZE); % free space
+        epsilonr=1;
+        mur=1;
     else
-        epsilon=[8.8542e-012*ones(1,SIZE-(SIZE/2)) 1.7708e-011*ones(1,(SIZE/2))]; % half medium
+        epsilon=[-8.8542e-012*ones(1,SIZE-(SIZE/2)) -1.7708e-011*ones(1,(SIZE/2))]; % half medium
+        mu=-1.2566e-006*ones(1,SIZE);
+        epsilonr=-1;
+        mur=-1;
     end
     for qTime = 1:(maxTime-1)
         hyn_1=hyn_0;
@@ -101,7 +106,7 @@ for medium= 1:2
             by(mm) = by(mm) + ((ez(mm) - ez(mm+1)) * (delt/(delx)));
         end
 %        Update Magnetic field
-        for  mm = 2:(SIZE-1)  %changed it from 1 to 2 because of by(0) index problem at 1
+        for  mm = 1:(SIZE-1)  %changed it from 1 to 2 because of by(0) index problem at 1
             hy(mm) = (am*(by(mm)-2*byn_0(mm)+byn_1(mm)))+(bm*(by(mm)-byn_1(mm)))+(cm*((2*hyn_0(mm))-(hyn_1(mm))))+(dm*((2*hyn_0(mm))+(hyn_1(mm))))+(em*(hyn_1(mm)));
         end
         
@@ -111,10 +116,11 @@ for medium= 1:2
         end
 %         Update Electrical filed
         for mm = 2:(SIZE-1)
-            ez(mm) = (ae*(dz(mm)-2*dzn_0(mm)+dzn_1(mm)))+(be*(dz(mm)-dzn_1(mm)))+(ce*((2*ezn_0(mm))-(ezn_1(mm))))+(de*((2*ezn_0(mm))+(ezn_1(mm))))+(ee*(ezn_1(mm)));
+%             ez(mm) = (ae*(dz(mm)-2*dzn_0(mm)+dzn_1(mm)))+(be*(dz(mm)-dzn_1(mm)))+(ce*((2*ezn_0(mm))-ezn_1(mm)))+(de*((2*ezn_0(mm))+ezn_1(mm)))+(ee*ezn_1(mm));
+            ez(mm) = (ae*(dz(mm)-(2*dzn_0(mm))+dzn_1(mm)))+(be*(dz(mm)-dzn_1(mm)))+(ce*((2*ezn_0(mm))-ezn_1(mm)))+(de*((2*ezn_0(mm))+ezn_1(mm)))+(ee*ezn_1(mm));
         end
         Etemp(qTime)= ez(SIZE-(SIZE/2)+2); %just after boundary of medium
-        if SourceSelect==0
+        if SourceSelect==2
 %         Source node (hard coded)
 		    ez(2) = ez(2)+ (sin(2*pi*(qTime)*f*delt)*Sc);
          else
@@ -130,15 +136,15 @@ for medium= 1:2
 		ezmq=ez(SIZE);
 		ezm1q=ez(SIZE-1);
 %         Plotting
-       if medium==2
+%        if medium==2
         figure(1);
 %         subplot(2,1,1);
         plot(1:SIZE,ez);
         title('Electirc Component');
-%         xlim([0 SIZE]);
+        xlim([0 SIZE]);
 %         ylim([-1.2 1.2]);
 %         if medium==2
-%             line([SIZE-(SIZE/2) SIZE-(SIZE/2)],[-1.2 1.2],'Color','Red') % Medium slab line
+            line([SIZE-(SIZE/2) SIZE-(SIZE/2)],[-1.2 1.2],'Color','Red') % Medium slab line
 %         end
 %         subplot(2,1,2);
 %         plot(1:SIZE-1,hy);
@@ -148,9 +154,11 @@ for medium= 1:2
 %         if medium==2
 %         line([SIZE-500 SIZE-500],[-0.005 0.005],'Color','Red') % Medium slab line
 %         end
-       end
+%        end
           Exz1(qTime)=ez(Z1);
           Exz2(qTime)=ez(Z2);
+          
+       
     end
     if medium==1
         Eincident=Etemp;
