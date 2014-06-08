@@ -1,0 +1,18 @@
+This is BibTeX, Version 0.99dThe top-level auxiliary file: main.aux
+The style file: unsrtnat.bst
+Database file #1: Bibliography.bib
+Name 1 in "D. R. Smith, W. J. Padilla, D. C. Vier, S. C. Nemat-Naseer, and S. Schultz" has a comma at the end for entry smith
+while executing---line 1233 of file unsrtnat.bst
+Too many commas in name 1 of "D. R. Smith, W. J. Padilla, D. C. Vier, S. C. Nemat-Naseer, and S. Schultz" for entry smith
+while executing---line 1233 of file unsrtnat.bst
+Name 1 in "D. R. Smith, W. J. Padilla, D. C. Vier, S. C. Nemat-Naseer, and S. Schultz" has a comma at the end for entry smith
+while executing---line 1315 of file unsrtnat.bst
+Too many commas in name 1 of "D. R. Smith, W. J. Padilla, D. C. Vier, S. C. Nemat-Naseer, and S. Schultz" for entry smith
+while executing---line 1315 of file unsrtnat.bst
+Name 1 in "D. R. Smith, W. J. Padilla, D. C. Vier, S. C. Nemat-Naseer, and S. Schultz" has a comma at the end for entry smith
+while executing---line 1315 of file unsrtnat.bst
+Too many commas in name 1 of "D. R. Smith, W. J. Padilla, D. C. Vier, S. C. Nemat-Naseer, and S. Schultz" for entry smith
+while executing---line 1315 of file unsrtnat.bst
+Warning--empty title in smith
+Warning--there's a number but no volume in smith
+(There were 6 error messages)

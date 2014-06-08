@@ -1,0 +1,52 @@
+\contentsline {chapter}{Declaration of Authorship}{ii}{dummy.1}
+\vspace {1em}
+\contentsline {chapter}{Abstract}{iii}{dummy.2}
+\vspace {1em}
+\contentsline {chapter}{Acknowledgements}{iv}{dummy.3}
+\vspace {1em}
+\contentsline {chapter}{Table of Contents}{v}{dummy.4}
+\contentsline {chapter}{List of Figures}{vii}{dummy.5}
+\contentsline {chapter}{List of Tables}{viii}{dummy.6}
+\contentsline {chapter}{Abbreviations}{ix}{dummy.7}
+\contentsline {chapter}{Physical Constants}{x}{dummy.8}
+\contentsline {chapter}{Symbols}{xi}{dummy.9}
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}Background }{1}{section.1.1}
+\contentsline {section}{\numberline {1.2}Problem Statement}{2}{section.1.2}
+\contentsline {chapter}{\numberline {2}Design and Implementation}{4}{chapter.2}
+\contentsline {section}{\numberline {2.1}Modeling of a denser slab}{4}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Finite Difference Time Domain (FDTD) technique}{4}{subsection.2.1.1}
+\contentsline {subsection}{\numberline {2.1.2}The Yee Algorithm}{5}{subsection.2.1.2}
+\contentsline {subsection}{\numberline {2.1.3}One-Dimensional FDTD simulation}{6}{subsection.2.1.3}
+\contentsline {subsection}{\numberline {2.1.4}Boundary Conditions}{7}{subsection.2.1.4}
+\contentsline {subsubsection}{\numberline {2.1.4.1}Perfect Conductor Boundary}{8}{subsubsection.2.1.4.1}
+\contentsline {subsubsection}{\numberline {2.1.4.2}Absorbing Boundary Conditions}{8}{subsubsection.2.1.4.2}
+\contentsline {subsection}{\numberline {2.1.5}Simulation Results}{10}{subsection.2.1.5}
+\contentsline {subsubsection}{\numberline {2.1.5.1}Simulation Parameters}{10}{subsubsection.2.1.5.1}
+\contentsline {subsubsection}{\numberline {2.1.5.2}Frequency Domain Analysis}{11}{subsubsection.2.1.5.2}
+\contentsline {section}{\numberline {2.2}Modeling of NIM slab }{12}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Limitation of FDTD}{12}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}The Drudes Model}{13}{subsection.2.2.2}
+\contentsline {subsubsection}{\numberline {2.2.2.1}Drudes Algorithm}{13}{subsubsection.2.2.2.1}
+\contentsline {subsection}{\numberline {2.2.3}Simulation of 1D DNG Slab}{14}{subsection.2.2.3}
+\contentsline {subsection}{\numberline {2.2.4}Problem Specification}{14}{subsection.2.2.4}
+\contentsline {subsection}{\numberline {2.2.5}Simulation Parameters}{15}{subsection.2.2.5}
+\contentsline {subsection}{\numberline {2.2.6}Simulation Results}{15}{subsection.2.2.6}
+\contentsline {section}{\numberline {2.3}Implementation in C++}{17}{section.2.3}
+\contentsline {section}{\numberline {2.4}Implementation on GPU }{17}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}AMD 6770M}{17}{subsection.2.4.1}
+\contentsline {subsection}{\numberline {2.4.2}OpenCL}{17}{subsection.2.4.2}
+\contentsline {chapter}{\numberline {3}Experimental Results and Conclusion}{18}{chapter.3}
+\contentsline {section}{\numberline {3.1}Experimental Evalution}{18}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Frequency Response of Hydrophones }{18}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Directivity Pattern of Hydrophones }{19}{subsection.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}Transmission Range of Hydrophones }{20}{subsection.3.1.3}
+\contentsline {subsection}{\numberline {3.1.4}Evaluation of Testbed }{21}{subsection.3.1.4}
+\contentsline {section}{\numberline {3.2}Conclusion and Future Work}{22}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Conclusion }{22}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Future Work }{23}{subsection.3.2.2}
+\vspace {2em}
+\contentsline {chapter}{\numberline {A}Appendix Title Here}{24}{appendix.A}
+\vspace {2em}
+\contentsline {chapter}{Bibliography}{25}{dummy.10}
+\contentsline {chapter}{Index}{26}{dummy.11}

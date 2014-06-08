@@ -1,0 +1,14 @@
+This is pdfTeX, Version 3.1415926-2.3-1.40.12 (MiKTeX 2.9) (preloaded format=pdftex 2013.12.26)  6 JUN 2014 10:10
+entering extended mode
+**C:/Users/Osama/Documents/ThesisTemplate/ThesisTemplate/Thesis.cls
+(C:/Users/Osama/Documents/ThesisTemplate/ThesisTemplate/Thesis.cls
+! Undefined control sequence.
+l.27 \NeedsTeXFormat
+                    {LaTeX2e}[1996/12/01]
+? 
+! Emergency stop.
+l.27 \NeedsTeXFormat
+                    {LaTeX2e}[1996/12/01]
+End of file on the terminal!
+
+!  ==> Fatal error occurred, no output PDF file produced!
