@@ -5,8 +5,10 @@
 \label{Chapter2} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
 %\lhead{Chapter 2. \emph{Design and Implementation}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
-\fancyhead[RO]{Chapter 2.~\emph{\Chaptername}\hfill\thepage}
-\fancyhead[LE]{\thepage\hfill\emph{\Sectionname}}
+\fancyhead[RO]{\thepage}
+\fancyhead[RE]{\thepage}
+\fancyhead[LE]{Chapter 2.~\emph{\Chaptername}}
+\fancyhead[LO]{\emph{\ttitle}}
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
@@ -246,17 +248,17 @@ setting $g=0$ and $ \epsilon_{\infty} = 1$ in equation \eqref{drudee2}, value of
 Auxiliary update equations for electric and magnetic components in Drudes model are give by \eqref{drudemag} and \eqref{drudeele}.
 \begin{equation}
 \begin{split}
-	H_y^{n+1} = a_m \left( B_y^{n+1} - 2B_y^n + B_y^{n-1} \right) + b_m \left( B_y^(n+1) - B_y^{n-1}  \right)\\
-&=+c_m \left( 2H_y^n-H_y^{n-1} \right) + d_m \left( 2H_y^n + H_y^{n-1} \right) +e_m H_y^{n-1}
+	H_y^{n+1} &= a_m \left( B_y^{n+1} - 2B_y^n + B_y^{n-1} \right) + b_m \left( B_y^(n+1) - B_y^{n-1}  \right)\\
+&+c_m \left( 2H_y^n-H_y^{n-1} \right) + d_m \left( 2H_y^n + H_y^{n-1} \right) +e_m H_y^{n-1}\\
 \end{split}
 \label{drudemag}
 \end{equation}
 \begin{equation}
-%\begin{IEEEeqnarray}{lCr}
-	E_z^{n+1} = a_e \left( D_z^{n+1} - 2D_z^n + D_z^{n-1} \right) + b_e \left( D_z^(n+1) - D_z^{n-1}  \right)+ 
-c_e \left( 2E_z^n-E_z^{n-1} \right) + d_e \left( 2E_z^n + E_z^{n-1} \right) +e_e E_z^{n-1}
+\begin{split}
+	E_z^{n+1} &= a_e \left( D_z^{n+1} - 2D_z^n + D_z^{n-1} \right) + b_e \left( D_z^(n+1) - D_z^{n-1}  \right)\\+ 
+&c_e \left( 2E_z^n-E_z^{n-1} \right) + d_e \left( 2E_z^n + E_z^{n-1} \right) +e_e E_z^{n-1}
 \label{drudeele}
-%\end{IEEEeqnarray}
+\end{split}
 \end{equation}
 Update Equation for wave propagation in $-x$ direction are given by 
 \begin{equation}
@@ -371,19 +373,112 @@ Post processing and simulation movie is done by using MATLAB. below is the code 
         	end
 \end{lstlisting}
 the code \ref{matread}  reads the files or else generate Error. $j$ is the variable used for main timing loop. with addition to these Efield values other simulation parameters are also written on individual files these parameters include Etransmitted, Ereflected, Ez1, Ez2 and simulation parameters (delta, k0, z1,z2). complete MATLAB code can be found in Appendix %ref here
+\clearpage
 %----------------------------------- 
 %	SECTION 4
 %-----------------------------------
 \section{Implementation on GPU }
+Graphical Processing Unit or GPU is a computational device designed with a different architecture and different purpose. GPUs are Faster than CPUs because they have more number of cores (up-to 512 on a single chip \cite{cpuvsgpunotes}
+) as compared to CPU and they use techniques like pipelining \cite{ref:gpu2}. GPUs memory is faster due to a larger bus width. simulations on GPU are 10-30 times faster than CPU \cite{Ref:gpuvscpui}
+. Hence the FDTD algorithm is implemented on GPU because it can be parallelized.
 
-%-----------------------------------
-%	SUBSECTION 4.1
-%-----------------------------------
-\subsection{AMD 6770M}
- 
 %-----------------------------------
 %	SUBSECTION 4.2
 %-----------------------------------
 \subsection{OpenCL}
+OpenCL (Open Computing Language) is a framework by KHRONOS Group %ref here
+for parallel programming on heterogeneous systems. its main advantage is program portability, the same code can run on multiple devices such as CPU, GPU, FPGA, DSP kit \cite{ref:devices}
+ etc. OpenCL framework include support for c++ however main kernels are written in language c99 which is a old standard for c language.
+%-----------------------------------
+%	SUBSECTION 4.3
+%-----------------------------------
+\subsection {OpenCL Program Flow}
+To write a program in OpenCL we need to take care of Host side program, Kernel program, host side memory and device memory. the host is programmed in C/C++ while device is programmed using OpenCL C (c99).
+
+\subsubsection{Kernel}
+every function which runs on device is required to be in a kernel function
+
+\lstset{language=C,caption=OpenCL Kernel function, label=kernel}
+\begin{lstlisting}
+__kernel void hy_kernel(__global PRECISION *hy, __global PRECISION *ez, __global PRECISION *mu, const PRECISION delt, const PRECISION delx, const int SIZE) 
+{
+	unsigned int i = get_global_id(0);
+  if(i < SIZE)
+    hy[i] = hy[i] + (ez[i+1] - ez[i]) * (delt/(delx*mu[i]));
+}
+\end{lstlisting}
+OpenCl automatically manages \lstinline{global_id} and run them in parallel hence the multiplication result of  \lstinline{hy[i] = hy[i] + (ez[i+1] - ez[i]) * (delt/(delx*mu[i]));} are obtained simultaneously over the whole space.
+\lstinline{__global PRECISION *hy} is used to pass an array into device memory. The kernel is only allowed read/write access to global, constant, local, and private memory, which is specified by \lstinline{ __global, __constant, __local, __private}, respectively.
+
+\subsubsection{Host Program}
+\label{HostProgram}
+Host program executes the kernels using the API of OpenCL. Before running any program it initializes some parameters. In a complete run it performs a number of operations. which are listed below \cite{openclpro}.
+\begin{enumerate}
+\item Listing available platforms
+\item Displaying platforms and get input for desired platform
+\item Creating context
+\item Creating command queue
+\item Creating memory objects
+\item Reading kernel file
+\item Creation of program object
+\item Compilation of kernel
+\item Creating kernel object
+\item Set kernel argument
+\item Executing kernel
+\item reading memory object
+\item Releasing kernel
+\item De-allocating memory in device
+\end{enumerate}
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=6in]{Figures/opencl.jpg}
+		%\rule{35em}{0.5pt}
+	\caption[OpenCL basic run]{ Basics tasks performed by OpenCL API}
+	\label{opencl}
+\end{figure}
+
+Complete codes can be found in Appendix %ref here
+. After simulation post processing is done in MATLAB
+%-----------------------------------
+%	SUBSECTION 4.4
+%-----------------------------------
+\subsection {Challenges in GPU programming}
+Main challenges in writing OpenCL program were
+
+\subsubsection{Read Delay}
+When data is passed to GPU or values are read from device memory to host memory considerable time is consumed. as in algorithm for boundary conditions we need pervious time step values so there were a lot of data transfer from host to device and device to host memory, and to save the values of Electric field arrays they need to be brought into host memory. to reduce the overhead time absorbing boundary condition was moved into kernal number 2, and snapshot (writing to file) interval was changed from each iteration to every 20th iteration \ref{kernel2}.
+\lstset{language=C,caption=OpenCL saving Efield values in files, label=kernel2}
+\begin{lstlisting}
+if (qTime % 20 ==0) // Snapshot interval
+{
+      //// Copy data back to host ////
+      SafeCall(clEnqueueReadBuffer(commandQueue, ez_gpu, CL_TRUE, 0,  sizeof(PRECISION)*SIZE, ez, 0, NULL, NULL), "Error reading ez back to host memory");    
+      SafeCall(clWaitForEvents(1, &events[0]), "Error: Waiting for kernel run to finish. (clWaitForEvents)");
+         // -------- Saving to file -------- 
+			stream.str(std::string());   						// clear stringstream
+			stream<<"./results/"<<"Efield"<<medium<<"_"<<qTime+1<<".jd";   		// concatenate
+			filename = stream.str();		 					// copy string
+			snapshot.open(filename.c_str(), ios::out|ios::binary);
+			for (mm = 0; mm < SIZE; mm++)
+			snapshot.write((char *)&ez[mm],sizeof(float));
+			snapshot.close();
+ } 
+\end{lstlisting}
+
+\subsubsection{Kernel syncronization}
+As value of electric node depends on neghoboring magnetic field nodes and value of magnetic field nodes  depends on neghoboring elctric field nodes it is essential that all kernels run in a syncronized way, or else wrong values would be calculated because of inavailability of updated nodes values. becase all kernels are not performing same calculations it is prone to desyncronization. to run these kernel in syncronized method following command \ref{kernel3}  is used inside kernel 2. this command basically look for global (other) kernel speed ad it's local speed, then it adds a delay to syncronize it perfectly with other kernels. there is a tradeoff with this method which is extra computational time in which the kernel is just waiting for others to complete.
+\lstset{language=C,caption=Kernel syncronization, label=kernel3}
+\begin{lstlisting}
+	barrier(CLK_GLOBAL_MEM_FENCE|CLK_LOCAL_MEM_FENCE);
+\end{lstlisting}
+
+
+
+
+
+
+
+
+
 
 
