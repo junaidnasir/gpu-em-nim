@@ -23,19 +23,22 @@ results of NIM slab.
 %	SUBSECTION 1.1
 %-----------------------------------
 \subsection{Finite Difference Time Domain (FDTD) technique}
+\index{Finite Difference Time Domain (FDTD) technique}
 FDTD method is used to solve problems related to electromagnetic. It is very easy to implement but require much computational power and time as this is a recursive technique. The main benefit of using this technique is that it is accurate on wide range of frequency. 
 
-Maxwell's equations (Ampere's and Faraday's laws) can be written as finite differences using FDTD. A function $f(x)$ whose value need to be found at $x_o$ is given by %ref here
+Maxwell's equations (Ampere's and Faraday's laws) can be written as finite differences using FDTD. A function $f(x)$ whose value need to be found at $x_o$ is given by \eqref{fxwali}
 	\begin{equation}
 	\left. \frac {df(x)}{d(x)}\right|_{x=x_o} \approx 
 	\frac {f \left( x_o + \frac{\delta}{2} \right) - f \left( x_o - \frac{\delta}{2} \right) }{\delta}
+	\label{fxwali}
 	\end{equation}
 this equation provides an approximation of derivative of $f(x)$ at $x_o$ but the function is sampled at an offset $\delta$ from the original point $x_o$. It have second-order accuracy or second-order behavior. This implies if $\delta$ is reduced by a factor of 10 the error will be reduced by 100. if $\delta = 0$ then $error = 0$.
 %-----------------------------------
 %	SUBSECTION 1.2
 %-----------------------------------
 \subsection{The Yee Algorithm}
-Kane Yee proposed FDTD algorithm in 1966% ref here
+\index{Kane Yee}
+Kane Yee proposed FDTD algorithm in 1966\cite{kane}
 . It can be summarized as follows:
 \begin{enumerate}
 \item Differential forms of Maxwell's equations are written with finite differences.
@@ -110,7 +113,7 @@ As the field is initially zero it will remain zero as there is no energy passing
 \end{lstlisting}
 
 \textbf{Results}\\
-By using the program in Appendix %ref here
+By using the program in Appendix \ref{matlab1}
 we get the results in figure \ref{fig:fdtdpc}.
 \begin{figure}[htbp]
 	\centering
@@ -123,12 +126,13 @@ we get the results in figure \ref{fig:fdtdpc}.
 %	SUBSECTION 1.4
 %-----------------------------------
 \subsection{Boundary Conditions}
+\index{Grid truncation}
 Grid termination is called boundary condition because there are no neighboring values at boundary. we must use some kind of boundary condition depending upon the requirements. two type of boundary conditions are mentioned below.
 %-----------------------------------
 %	SUBSECTION 1.4.1
 %-----------------------------------
 \subsubsection{Perfect Conductor Boundary}
-In program appendix % ref here
+In program Appendix \ref{matlab2}
 grid is terminated with a zero value of magnetic field
 making it a perfect magnetic conductor (PMC) which reflects the wave completely. it also inverts the magnetic component of the wave figure \ref{fig:pmc}. In reality PMC does not exists hence to make this simulation as close to real behavior we use some other method to truncate the grid.
 \begin{figure}[htbp]
@@ -142,14 +146,15 @@ making it a perfect magnetic conductor (PMC) which reflects the wave completely.
 %	SUBSECTION 1.4.2
 %-----------------------------------
 \subsubsection{Absorbing Boundary Conditions}
+\index{ABC}
 Perfect conductor boundary depends on the speed of propagation. It requires that at each time instant the wave also propagate by one spatial step, but with the introduction of dielectric (slab) the speed of propagation decreases resulting in unstable simulation. hence we need an advance boundary condition which is differential equation based absorbing boundary condition (ABC).
 \begin{equation}
 	E_z^{q+1} \left[ 0 \right] = E_z^q \left[ 1 \right] + \frac {\frac{S_c}{\sqrt\mu_r\epsilon_r}-1} {\frac{S_c}{\sqrt\mu_r\epsilon_r}+1} \left( E_z^{q+1} \left[ 1 \right] - E_z^q \left[ 0 \right]  \right)
-\label{abc}
+\label{abc222}
 \end{equation}
-Equation \eqref(abc) is absorbing boundary equation %ref here
+Equation \eqref{abc222} is absorbing boundary equation
 for electric field. As it can be seen that this boundary condition also depends upon last time step value at boundary point. so we need to save that value in our program as well.
-Program in appendix %ref here
+Program in appendix \ref{matlab3}
 implements this boundary condition.
 
 \textbf{Results}\\
@@ -166,13 +171,13 @@ Figure \ref{fig:abc} shows Gaussian wave after passing through a denser slab wit
 %	SUBSECTION 1.5
 %-----------------------------------
 \subsection{Simulation Results}
-Following results were found after running program %ref here
- this program implements FDTD algorithm in free space, denser medium slab, additive source and absorbing boundary conditions.
+Following results were found after running program \ref{matlab4}
+ this program implements FDTD algorithm in free space, denser medium slab, additive source and absorbing boundary conditions and perform post processing on simulation results.
 %-----------------------------------
 %	SUBSECTION 1.5.1
 %-----------------------------------
 \subsubsection{Simulation Parameters}
-Parameters for program %ref here
+Parameters for program  \ref{matlab4}
 are \\
 Medium 1 = Free space  $\mu=\mu_0$  $\epsilon=\epsilon_0$\\
 Medium 2 = slab of denser medium $\mu=2\mu_0$  $\epsilon=2\epsilon_0$\\
@@ -183,6 +188,7 @@ Boundary conditions = Absorbing boundary conditions
 %	SUBSECTION 1.5.2
 %-----------------------------------
 \subsubsection{Frequency Domain Analysis}
+\index{FDTD Frequency Analysis}
 Frequency domain analysis compares the theoretical values with that of simulated values.
  In Frequency domain analysis spectrum of transmitted and Incident waves are plotted. 
 Refractive index is also calculated which should be equal to calculated refractive index given by equation \eqref{refractiveindex}
@@ -220,6 +226,7 @@ The standard FDTD does not work for negative values of permittivity and permeabi
 %	SUBSECTION 2.2
 %-----------------------------------
 \subsection{The Drudes Model}
+\index{Drudes Model}
 Ideally permeability and permittivity of a material remain constant for all values of operating frequencies. However in reality Speed of electromagnetic waves changes with frequency and there is also loss due to particle collisions inside material. A material is called dispersive if it's permeability or permittivity is frequency dependent.
 Paual Drude proposed a model of transport properties in materials in 1990\citep{drude}.
 \begin{equation}
@@ -279,7 +286,7 @@ Update Equation for wave propagation in $-x$ direction are given by
 %-----------------------------------
 \subsubsection{Problem Specification}
 An EM wave is incident on a slab with negative permittivity and permeability ($\epsilon_r= -1$ $\mu_r= -1$) at frequency of 3Ghz for Sinusoidal wave. Gaussian wave is also applied to same slab for wide range frequency analysis. MATLAB code is available in 
-Appendix %ref here
+Appendix \ref{matlab5}
 %-----------------------------------
 %	SUBSECTION 2.3.2
 %-----------------------------------
@@ -329,13 +336,14 @@ Figure \ref{drude2} shows the snapshot of simulation with Sinusoidal wave as sou
 %----------------------------------------------------------------------------------------
 
 \section{Implementation in C++}
-
-Before implementing the code on GPU it needs to be converted in c++ as OpenCL use c99 which is similar to C (more details of OpenCL in %ref here
+\index{C++ implementation}
+Before implementing the code on GPU it needs to be converted in c++ as OpenCL use c99 which is similar to C.
 ). c++ have the basic functions to run the main loop, but it does not provide post processing utilities we require, natively, also graphical plotting is not supported. hence we must transfer the results of computation back to MATLAB for plotting and post processing.
 %-----------------------------------
 %	SUBSECTION 3.1
 %-----------------------------------
 \subsection{File handling in c++}
+\index{File handling dynamic}
 As our domain space can be very large the data produced by this computation is also very large. To transfer this data in MATLAB it have to be first written in files, but managing these files is also another issue. suppose we have a spatial domain of 2048, and time domain of 4084, it means there will be 2048 different values for each time step, as the simulation calculates both transmitted and refractive wave parameters total no of files become $2*Total_Time$ with each file having 2048 entries.
 to cater this problem a dynamic file allocation scheme was written which saves the value for each time step in separate file and automatically name it accordingly.
 \lstset{language=[ISO]C++, commentstyle=\color{green!50!black}, keywordstyle=\color{blue}, stringstyle=\color{red!60!black},caption=c++ file handling variables and Directory creation, label=cright1}
@@ -359,7 +367,7 @@ this code \ref{cright1} creates a directory named results to store the files in 
 		snapshot.write((char *)&ez[mm],sizeof(double));
 	snapshot.close();
 \end{lstlisting}
-Above code \ref{cright2} runs in the main time loop and saves values of Efield at every iteration. it automatically name the file according to medium and time instance. .jd is a file extension of own choice. Complete code can be found in Appendix %ref here
+Above code \ref{cright2} runs in the main time loop and saves values of Efield at every iteration. it automatically name the file according to medium and time instance. .jd is a file extension of own choice. Complete code can be found in Appendix \ref{cplus1}
 
 Post processing and simulation movie is done by using MATLAB. below is the code to read the files written by c++ program
 \lstset{language=Matlab, commentstyle=\color{green!50!black}, keywordstyle=\color{blue}, stringstyle=\color{red!60!black},caption=Read files in MATLAB, label=matread}
@@ -372,12 +380,13 @@ Post processing and simulation movie is done by using MATLAB. below is the code 
        	        return
         	end
 \end{lstlisting}
-the code \ref{matread}  reads the files or else generate Error. $j$ is the variable used for main timing loop. with addition to these Efield values other simulation parameters are also written on individual files these parameters include Etransmitted, Ereflected, Ez1, Ez2 and simulation parameters (delta, k0, z1,z2). complete MATLAB code can be found in Appendix %ref here
+the code \ref{matread}  reads the files or else generate Error. $j$ is the variable used for main timing loop. with addition to these Efield values other simulation parameters are also written on individual files these parameters include Etransmitted, Ereflected, Ez1, Ez2 and simulation parameters (delta, k0, z1,z2). complete MATLAB code can be found in Appendix \ref{cplus2}
 \clearpage
 %----------------------------------- 
 %	SECTION 4
 %-----------------------------------
 \section{Implementation on GPU }
+\index{GPU}
 Graphical Processing Unit or GPU is a computational device designed with a different architecture and different purpose. GPUs are Faster than CPUs because they have more number of cores (up-to 512 on a single chip \cite{cpuvsgpunotes}
 ) as compared to CPU and they use techniques like pipelining \cite{ref:gpu2}. GPUs memory is faster due to a larger bus width. simulations on GPU are 10-30 times faster than CPU \cite{Ref:gpuvscpui}
 . Hence the FDTD algorithm is implemented on GPU because it can be parallelized.
@@ -386,7 +395,8 @@ Graphical Processing Unit or GPU is a computational device designed with a diffe
 %	SUBSECTION 4.2
 %-----------------------------------
 \subsection{OpenCL}
-OpenCL (Open Computing Language) is a framework by KHRONOS Group %ref here
+\index{OpenCL}
+OpenCL (Open Computing Language) is a framework by KHRONOS Group \cite{Khronos}
 for parallel programming on heterogeneous systems. its main advantage is program portability, the same code can run on multiple devices such as CPU, GPU, FPGA, DSP kit \cite{ref:devices}
  etc. OpenCL framework include support for c++ however main kernels are written in language c99 which is a old standard for c language.
 %-----------------------------------
@@ -396,6 +406,7 @@ for parallel programming on heterogeneous systems. its main advantage is program
 To write a program in OpenCL we need to take care of Host side program, Kernel program, host side memory and device memory. the host is programmed in C/C++ while device is programmed using OpenCL C (c99).
 
 \subsubsection{Kernel}
+\index{Kernel function}
 every function which runs on device is required to be in a kernel function
 
 \lstset{language=C,caption=OpenCL Kernel function, label=kernel}
@@ -408,7 +419,7 @@ __kernel void hy_kernel(__global PRECISION *hy, __global PRECISION *ez, __global
 }
 \end{lstlisting}
 OpenCl automatically manages \lstinline{global_id} and run them in parallel hence the multiplication result of  \lstinline{hy[i] = hy[i] + (ez[i+1] - ez[i]) * (delt/(delx*mu[i]));} are obtained simultaneously over the whole space.
-\lstinline{__global PRECISION *hy} is used to pass an array into device memory. The kernel is only allowed read/write access to global, constant, local, and private memory, which is specified by \lstinline{ __global, __constant, __local, __private}, respectively.
+\lstinline{__global PRECISION *hy} is used to pass an array into device memory. The kernel is only allowed read/write access to global, constant, local, and private memory, which is specified by \lstinline{ __global, __constant, __local, __private}, respectively. Kernel Functions can be found in \ref{gpu22}
 
 \subsubsection{Host Program}
 \label{HostProgram}
@@ -437,7 +448,7 @@ Host program executes the kernels using the API of OpenCL. Before running any pr
 	\label{opencl}
 \end{figure}
 
-Complete codes can be found in Appendix %ref here
+Complete codes can be found at \url{https://code.google.com/p/gpu-em-nim/source/browse/}
 . After simulation post processing is done in MATLAB
 %-----------------------------------
 %	SUBSECTION 4.4
@@ -446,7 +457,7 @@ Complete codes can be found in Appendix %ref here
 Main challenges in writing OpenCL program were
 
 \subsubsection{Read Delay}
-When data is passed to GPU or values are read from device memory to host memory considerable time is consumed. as in algorithm for boundary conditions we need pervious time step values so there were a lot of data transfer from host to device and device to host memory, and to save the values of Electric field arrays they need to be brought into host memory. to reduce the overhead time absorbing boundary condition was moved into kernal number 2, and snapshot (writing to file) interval was changed from each iteration to every 20th iteration \ref{kernel2}.
+When data is passed to GPU or values are read from device memory to host memory considerable time is consumed. as in algorithm for boundary conditions we need previous time step values so there were a lot of data transfer from host to device and device to host memory, and to save the values of Electric field arrays they need to be brought into host memory. to reduce the overhead time absorbing boundary condition was moved into kernel number 2, and snapshot (writing to file) interval was changed from each iteration to every 20th iteration \ref{kernel2}.
 \lstset{language=C,caption=OpenCL saving Efield values in files, label=kernel2}
 \begin{lstlisting}
 if (qTime % 20 ==0) // Snapshot interval
@@ -465,9 +476,10 @@ if (qTime % 20 ==0) // Snapshot interval
  } 
 \end{lstlisting}
 
-\subsubsection{Kernel syncronization}
-As value of electric node depends on neghoboring magnetic field nodes and value of magnetic field nodes  depends on neghoboring elctric field nodes it is essential that all kernels run in a syncronized way, or else wrong values would be calculated because of inavailability of updated nodes values. becase all kernels are not performing same calculations it is prone to desyncronization. to run these kernel in syncronized method following command \ref{kernel3}  is used inside kernel 2. this command basically look for global (other) kernel speed ad it's local speed, then it adds a delay to syncronize it perfectly with other kernels. there is a tradeoff with this method which is extra computational time in which the kernel is just waiting for others to complete.
-\lstset{language=C,caption=Kernel syncronization, label=kernel3}
+\subsubsection{Kernel synchronization}
+\index{Kernel synchronization}
+As value of electric node depends on neighboring magnetic field nodes and value of magnetic field nodes  depends on neighboring electric field nodes it is essential that all kernels run in a synchronized way, or else wrong values would be calculated because of unavailability of updated nodes values. because all kernels are not performing same calculations it is prone to synchronization. to run these kernel in synchronized method following command \ref{kernel3}  is used inside kernel 2. this command basically look for global (other) kernel speed ad it's local speed, then it adds a delay to synchronize it perfectly with other kernels. there is a trade off with this method which is extra computational time in which the kernel is just waiting for others to complete.
+\lstset{language=C,caption=Kernel synchronization, label=kernel3}
 \begin{lstlisting}
 	barrier(CLK_GLOBAL_MEM_FENCE|CLK_LOCAL_MEM_FENCE);
 \end{lstlisting}

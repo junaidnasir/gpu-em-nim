@@ -1,6 +1,11 @@
 This is BibTeX, Version 0.99dThe top-level auxiliary file: main.aux
 The style file: unsrtnat.bst
 Database file #1: Bibliography.bib
+You're missing a field name---line 65 of file Bibliography.bib
+ :     
+ :     %author    = "Khronos Group",
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
 Name 1 in "D. R. Smith, W. J. Padilla, D. C. Vier, S. C. Nemat-Naseer, and S. Schultz" has a comma at the end for entry smith
 while executing---line 1233 of file unsrtnat.bst
 Too many commas in name 1 of "D. R. Smith, W. J. Padilla, D. C. Vier, S. C. Nemat-Naseer, and S. Schultz" for entry smith
@@ -21,9 +26,11 @@ Too many commas in name 1 of "D. R. Smith, W. J. Padilla, D. C. Vier, S. C. Nema
 while executing---line 1315 of file unsrtnat.bst
 Warning--empty title in smith
 Warning--there's a number but no volume in smith
+Warning--empty note in rama
 Warning--empty note in cpuvsgpunotes
 Warning--empty year in ref:gpu2
 Warning--empty year in Ref:gpuvscpui
+Warning--empty year in Khronos
 Warning--empty year in ref:devices
 Too many commas in name 1 of "Ryoji Tsuchiyama, Takashi Nakamura, Takuro Iizuka, Akihiro Asahara, Jeongdo Son, Satoshi Miki" for entry openclpro
 while executing---line 1315 of file unsrtnat.bst
@@ -37,4 +44,4 @@ Too many commas in name 1 of "Ryoji Tsuchiyama, Takashi Nakamura, Takuro Iizuka,
 while executing---line 1315 of file unsrtnat.bst
 Too many commas in name 1 of "Ryoji Tsuchiyama, Takashi Nakamura, Takuro Iizuka, Akihiro Asahara, Jeongdo Son, Satoshi Miki" for entry openclpro
 while executing---line 1315 of file unsrtnat.bst
-(There were 15 error messages)
+(There were 16 error messages)

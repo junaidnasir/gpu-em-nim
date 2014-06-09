@@ -1,4 +1,4 @@
-\begin{thebibliography}{7}
+\begin{thebibliography}{12}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -8,6 +8,30 @@
 \bibitem[D.~R.~Smith and Schultz(2000)]{smith}
 D.~C. Vier S. C. Nemat-Naseer D.~R.~Smith, W. J.~Padilla and S.~Schultz.
 \newblock \emph{Phys. Rev. Lett.}, \penalty0 (84):\penalty0 4184, 2000.
+
+\bibitem[Veselago(1968)]{vesel}
+V.~G. Veselago.
+\newblock The electrodynamics of substances with simultaneously negative values
+  of $\epsilon$ and $\mu$.
+\newblock \emph{Soviet Physics Uspekhi}, 10\penalty0 (4):\penalty0 509–514,
+  1968.
+
+\bibitem[Pendry(1999)]{pendry}
+J.B. et~al. Pendry.
+\newblock Microwave theory tech.
+\newblock \emph{IEEE Trans}, 47:\penalty0 2075, 1999.
+
+\bibitem[Ramakrishna(2006)]{rama}
+S.~A. Ramakrishna.
+\newblock Em research trends.
+\newblock 2006.
+
+\bibitem[Yee(1966)]{kane}
+Kane Yee.
+\newblock Numerical solution of initial boundary value problems involving
+  maxwell's equations in isotropic media.
+\newblock \emph{IEEE Transactions on Antennas and Propagation}, 14\penalty0
+  (3):\penalty0 302–307, 1966.
 
 \bibitem[Drude(1900)]{drude}
 Paul Drude.
@@ -28,6 +52,9 @@ Prof.~Mike Giles.
 nVidia.
 \newblock URL
   \url{http://www.nvidia.com/object/molecular_dynamics_simulation.html?_templateId=322}.
+
+\bibitem[Khr()]{Khronos}
+
 
 \bibitem[ref({\natexlab{b}})]{ref:devices}
 {\natexlab{b}}.

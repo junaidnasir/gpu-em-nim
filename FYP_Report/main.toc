@@ -9,7 +9,6 @@
 \contentsline {chapter}{List of Tables}{xi}{dummy.6}
 \contentsline {chapter}{Abbreviations}{xiii}{dummy.7}
 \contentsline {chapter}{Physical Constants}{xv}{dummy.8}
-\contentsline {chapter}{Symbols}{xvii}{dummy.9}
 \contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
 \contentsline {section}{\numberline {1.1}Background }{1}{section.1.1}
 \contentsline {section}{\numberline {1.2}Problem Statement}{2}{section.1.2}
@@ -41,7 +40,7 @@
 \contentsline {subsubsection}{\numberline {2.4.2.2}Host Program}{23}{subsubsection.2.4.2.2}
 \contentsline {subsection}{\numberline {2.4.3}Challenges in GPU programming}{24}{subsection.2.4.3}
 \contentsline {subsubsection}{\numberline {2.4.3.1}Read Delay}{25}{subsubsection.2.4.3.1}
-\contentsline {subsubsection}{\numberline {2.4.3.2}Kernel syncronization}{26}{subsubsection.2.4.3.2}
+\contentsline {subsubsection}{\numberline {2.4.3.2}Kernel synchronization}{26}{subsubsection.2.4.3.2}
 \contentsline {chapter}{\numberline {3}Performance Analysis and Comparison}{27}{chapter.3}
 \contentsline {section}{\numberline {3.1}Computational time comparison}{27}{section.3.1}
 \contentsline {section}{\numberline {3.2}Analysis }{27}{section.3.2}
@@ -49,7 +48,8 @@
 \contentsline {subsection}{\numberline {3.3.1}Conclusion }{30}{subsection.3.3.1}
 \contentsline {subsection}{\numberline {3.3.2}Future Work }{30}{subsection.3.3.2}
 \vspace {2em}
-\contentsline {chapter}{\numberline {A}Appendix Title Here}{31}{appendix.A}
+\contentsline {chapter}{\numberline {A}Program codes}{31}{appendix.A}
+\contentsline {chapter}{\numberline {B}Platforms Details}{61}{appendix.B}
 \vspace {2em}
-\contentsline {chapter}{Bibliography}{33}{dummy.10}
-\contentsline {chapter}{Index}{34}{dummy.11}
+\contentsline {chapter}{Bibliography}{63}{dummy.9}
+\contentsline {chapter}{Index}{65}{dummy.10}
