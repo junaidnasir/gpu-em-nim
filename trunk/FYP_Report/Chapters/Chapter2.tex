@@ -4,8 +4,9 @@
 
 \label{Chapter2} % Change X to a consecutive number; for referencing this chapter elsewhere, use \ref{ChapterX}
 
-\lhead{Chapter 2. \emph{Design and Implementation}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
-
+%\lhead{Chapter 2. \emph{Design and Implementation}} % Change X to a consecutive number; this is for the header on each page - perhaps a shortened title
+\fancyhead[RO]{Chapter 2.~\emph{\Chaptername}\hfill\thepage}
+\fancyhead[LE]{\thepage\hfill\emph{\Sectionname}}
 %----------------------------------------------------------------------------------------
 %	SECTION 1
 %----------------------------------------------------------------------------------------
@@ -212,12 +213,12 @@ From figure \ref{fig:ri1} it is clear that simulation result and theoretical res
 %	SUBSECTION 2.1
 %-----------------------------------
 \subsection{Limitation of FDTD}
-The standard FDTD does not work for negative values of permittivity and permability. Reson behind this is Courant stability criterion. hence a NIM object can not be modeled using standard FDTD algorithm. Drude dispersive model or Lorentz model are used to implement NIM object. These models introduce frequency of operation $(\omega)$ into update equations.
+The standard FDTD does not work for negative values of permittivity and permeability. Reason behind this is Courant stability criterion. hence a NIM object can not be modeled using standard FDTD algorithm. Drude dispersive model or Lorentz model are used to implement NIM object. These models introduce frequency of operation $(\omega)$ into update equations.
 %-----------------------------------
 %	SUBSECTION 2.2
 %-----------------------------------
 \subsection{The Drudes Model}
-Ideally permeability and permitivity of a material remain constant for all values of operating frequencies. However in reality Speed of electromagnetic waves changes with frequency and there is also loss due to particle collisions inside material. A material is called dispersive if it's permability or permittivity is frequency depandent.
+Ideally permeability and permittivity of a material remain constant for all values of operating frequencies. However in reality Speed of electromagnetic waves changes with frequency and there is also loss due to particle collisions inside material. A material is called dispersive if it's permeability or permittivity is frequency dependent.
 Paual Drude proposed a model of transport properties in materials in 1990\citep{drude}.
 \begin{equation}
 	M\frac{d^2x}{dt^2} = QE(t) - Mg\frac{dx}{dt}
@@ -244,11 +245,11 @@ setting $g=0$ and $ \epsilon_{\infty} = 1$ in equation \eqref{drudee2}, value of
 \subsubsection{Drudes Algorithm}
 Auxiliary update equations for electric and magnetic components in Drudes model are give by \eqref{drudemag} and \eqref{drudeele}.
 \begin{equation}
-%\begin{IEEEeqnarray}{lCr}
-	H_y^{n+1} = a_m \left( B_y^{n+1} - 2B_y^n + B_y^{n-1} \right) + b_m \left( B_y^(n+1) - B_y^{n-1}  \right)+ 
-c_m \left( 2H_y^n-H_y^{n-1} \right) + d_m \left( 2H_y^n + H_y^{n-1} \right) +e_m H_y^{n-1}
+\begin{split}
+	H_y^{n+1} = a_m \left( B_y^{n+1} - 2B_y^n + B_y^{n-1} \right) + b_m \left( B_y^(n+1) - B_y^{n-1}  \right)\\
+&=+c_m \left( 2H_y^n-H_y^{n-1} \right) + d_m \left( 2H_y^n + H_y^{n-1} \right) +e_m H_y^{n-1}
+\end{split}
 \label{drudemag}
-%\end{IEEEeqnarray}
 \end{equation}
 \begin{equation}
 %\begin{IEEEeqnarray}{lCr}
@@ -257,7 +258,7 @@ c_e \left( 2E_z^n-E_z^{n-1} \right) + d_e \left( 2E_z^n + E_z^{n-1} \right) +e_e
 \label{drudeele}
 %\end{IEEEeqnarray}
 \end{equation}
-Update Equation for wave propagtion in $-x$ direction are given by 
+Update Equation for wave propagation in $-x$ direction are given by 
 \begin{equation}
 	B_y^{n+1}(k)=  B_y^{n} (k) + \frac {\Delta t}{\Delta z} \left( E_z^n (k) - E_z^n (k+1) \right)
 \label{drudeby}
@@ -274,41 +275,52 @@ Update Equation for wave propagtion in $-x$ direction are given by
 %-----------------------------------
 %	SUBSECTION 2.3.1
 %-----------------------------------
-\subsection{Problem Specification}
-An EM wave is incident on a slab with negative permittivity and permeability ($\epsilon_r= -1$ $\mu_r= -1$) at frequency of 3Ghz for Sinusoidal wave. Guassian wave is also applied to same slab for wide range frequancy analysis. MATLAB code is available in 
+\subsubsection{Problem Specification}
+An EM wave is incident on a slab with negative permittivity and permeability ($\epsilon_r= -1$ $\mu_r= -1$) at frequency of 3Ghz for Sinusoidal wave. Gaussian wave is also applied to same slab for wide range frequency analysis. MATLAB code is available in 
 Appendix %ref here
 %-----------------------------------
 %	SUBSECTION 2.3.2
 %-----------------------------------
-\subsection{Simulation Parameters}
-Frequency of Opertation $f=3 GHz$, $S_c=1$, in order to get $\epsilon_r= -1$ $\mu_r= -1$ plasma frequency needs to be $\omega_{pm}^2 = \omega_{pe}^2 = 2 \times (2\pi f_0)^2$ with $\epsilon_\infty = \mu_\infty = 1$.Absorbing Boundary Conditions are applied at field boundary.
+\subsubsection{Simulation Parameters}
+Frequency of Operation $f=3 GHz$, $S_c=1$, in order to get $\epsilon_r= -1$ $\mu_r= -1$ plasma frequency needs to be $\omega_{pm}^2 = \omega_{pe}^2 = 2 \times (2\pi f_0)^2$ with $\epsilon_\infty = \mu_\infty = 1$.Absorbing Boundary Conditions are applied at field boundary.
 %-----------------------------------
 %	SUBSECTION 2.3.3
 %-----------------------------------
 \subsection{Simulation Results}
-Following Results are optained from simulation of 1D DNG slab
-\textbf{Guassian Source}\\
-\begin{figure}[htbp]
+Following Results are obtained from simulation of 1D DNG slab.\\
+\textbf{Gaussian Source}\\
+Figure \ref{drude3} shows the snapshot of simulation after the Gaussian pulse entered the slab. it can clearly be seen that the wave is converted into different waveforms having different frequencies. It shows that dispersive material changes the speed of EM waves depending upon the value of $\epsilon \& \mu$.\\
+Figure \ref{drude4} compares the theoretical value of refractive index with that of simulation results. As the slab under observation had a plasma frequency calculated at 3Ghz for $\epsilon_r= -1$ $\mu_r= -1$ the error is minimum around this frequency. Which proves that slab is acting as a NIM for 3GHz frequency of operation.
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=5in]{Figures/drude3.jpg}
 		%\rule{35em}{0.5pt}
-	\caption[Guassian Pulse after Passing through DNG slab]{conversion of Guassian pulse into multiple wave forms of different frequencies after passing thorugh dispersive DNG slab}
+	\caption[Gaussian Pulse after Passing through DNG slab]{conversion of Gaussian pulse into multiple wave forms of different frequencies after passing through dispersive DNG slab}
 	\label{drude3}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=5in]{Figures/drude5.jpg}
 		%\rule{35em}{0.5pt}
-	\caption[Reflected and Transmitted wave's Frequency Spectrum for 1D DNG simulation]{Reflected and Transmitted wave's Frequency Spectrum for 1D DNG simulation with Guassian wave as source}
+	\caption[Reflected and Transmitted wave's Frequency Spectrum for 1D DNG simulation]{Reflected and Transmitted waves Frequency Spectrum for 1D DNG simulation with Gaussian wave as source}
 	\label{drude5}
 \end{figure}
-\begin{figure}[htbp]
+\begin{figure}[H]
 	\centering
 		\includegraphics[width=5in]{Figures/drude4.jpg}
 		%\rule{35em}{0.5pt}
-	\caption[Refractive Index vs Frequency for 1D DNG slab]{Refractive indexes(Y-axis) Vs Frequency Graphs(X-axis) for 1D DNG slab, Black dashed line shows therotical values, Blue line shows simulation results and calculated values, Grey lines mark the Frequency under study i.e 3GHz }
+	\caption[Refractive Index vs Frequency for 1D DNG slab]{Refractive indexes(Y-axis) Vs Frequency Graphs(X-axis) for 1D DNG slab, Black dashed line shows theoretical values, Blue line shows simulation results and calculated values, Grey lines mark the Frequency under study i.e 3GHz }
 	\label{drude4}
+\end{figure}
+\textbf{Sinusoidal Source}\\
+Figure \ref{drude2} shows the snapshot of simulation with Sinusoidal wave as source. it can be seen clearly that in steady state the wave entering the slab is identical to wave exiting the slab which implies that the reflected portion is approximately equal to zero. inside slab the wave seems to travel in opposite direction this is because the phase velocity\footnote{phase velocity of a wave is the rate at which the phase of the wave propagates in space} become negative inside NIM however the group velocity\footnote{group velocity of a wave is the velocity with which the overall shape of the waves' amplitudes ( known as the modulation or envelope of the wave) propagates through space.} is still in $-x$ direction.
+\begin{figure}[H]
+	\centering
+		\includegraphics[width=5in]{Figures/drude2.jpg}
+		%\rule{35em}{0.5pt}
+	\caption[Sinusoidal wave passing through DNG slab]{Sinusoidal wave of 3Ghz passing through a slab of NIM}
+	\label{drude2}
 \end{figure}
 %----------------------------------------------------------------------------------------
 %	SECTION 3
@@ -316,12 +328,50 @@ Following Results are optained from simulation of 1D DNG slab
 
 \section{Implementation in C++}
 
-test section tasdlasdj as
-asdsajdlsajdsa
-asdasda\\
-asdsadasd\\
-asdasd\\
+Before implementing the code on GPU it needs to be converted in c++ as OpenCL use c99 which is similar to C (more details of OpenCL in %ref here
+). c++ have the basic functions to run the main loop, but it does not provide post processing utilities we require, natively, also graphical plotting is not supported. hence we must transfer the results of computation back to MATLAB for plotting and post processing.
 %-----------------------------------
+%	SUBSECTION 3.1
+%-----------------------------------
+\subsection{File handling in c++}
+As our domain space can be very large the data produced by this computation is also very large. To transfer this data in MATLAB it have to be first written in files, but managing these files is also another issue. suppose we have a spatial domain of 2048, and time domain of 4084, it means there will be 2048 different values for each time step, as the simulation calculates both transmitted and refractive wave parameters total no of files become $2*Total_Time$ with each file having 2048 entries.
+to cater this problem a dynamic file allocation scheme was written which saves the value for each time step in separate file and automatically name it accordingly.
+\lstset{language=[ISO]C++, commentstyle=\color{green!50!black}, keywordstyle=\color{blue}, stringstyle=\color{red!60!black},caption=c++ file handling variables and Directory creation, label=cright1}
+\begin{lstlisting}
+// -------- Save to file Variables -------- 
+	fstream snapshot;
+	std::string filename ;
+	std::stringstream stream;
+	stream<<"results";
+	CreateDirectory(stream.str().c_str(), NULL) ;		//create directory of results
+\end{lstlisting}
+this code \ref{cright1} creates a directory named results to store the files in current project directory. header file \emph{windows.h} is required for this command.
+\lstset{language=[ISO]C++, commentstyle=\color{green!50!black}, keywordstyle=\color{blue}, stringstyle=\color{red!60!black},caption=c++ file handling using auto naming of file, label=cright2}
+\begin{lstlisting}
+// -------- Saving to file -------- 
+	stream.str(std::string());   						// clear stringstream
+	stream<<"./results/"<<"Efield"<<medium<<"_"<<qTime<<".jd";   		// concatenate
+	filename = stream.str();		 					// copy string
+	snapshot.open(filename, ios::out|ios::binary);
+	for (mm = 0; mm < SIZE; mm++)
+		snapshot.write((char *)&ez[mm],sizeof(double));
+	snapshot.close();
+\end{lstlisting}
+Above code \ref{cright2} runs in the main time loop and saves values of Efield at every iteration. it automatically name the file according to medium and time instance. .jd is a file extension of own choice. Complete code can be found in Appendix %ref here
+
+Post processing and simulation movie is done by using MATLAB. below is the code to read the files written by c++ program
+\lstset{language=Matlab, commentstyle=\color{green!50!black}, keywordstyle=\color{blue}, stringstyle=\color{red!60!black},caption=Read files in MATLAB, label=matread}
+\begin{lstlisting}
+	filepath=fullfile(pwd, 'results'); %set files directory path, pwd gets the current directory path
+	% in main Time loop
+	fidp = fopen(strcat(filepath,'\Efield',int2str(medium),'_',int2str(j),'.jd'),'r','l');
+	        if fidp==-1
+           	 display('Error');
+       	        return
+        	end
+\end{lstlisting}
+the code \ref{matread}  reads the files or else generate Error. $j$ is the variable used for main timing loop. with addition to these Efield values other simulation parameters are also written on individual files these parameters include Etransmitted, Ereflected, Ez1, Ez2 and simulation parameters (delta, k0, z1,z2). complete MATLAB code can be found in Appendix %ref here
+%----------------------------------- 
 %	SECTION 4
 %-----------------------------------
 \section{Implementation on GPU }
