@@ -1,22 +1,23 @@
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {1.1}{\ignorespaces Illustration of NIM}}{2}{figure.caption.7}
+\contentsline {figure}{\numberline {1.1}{\ignorespaces Illustration of NIM}}{2}{figure.caption.6}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces FDTD update equations}}{6}{figure.caption.8}
-\contentsline {figure}{\numberline {2.2}{\ignorespaces 1 dimensional FDTD Space}}{7}{figure.caption.9}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces 1 dimensional FDTD Space assumed with integer indices}}{8}{figure.caption.10}
-\contentsline {figure}{\numberline {2.4}{\ignorespaces Simulation Result of 1 dimensional FDTD in free space}}{9}{figure.caption.11}
-\contentsline {figure}{\numberline {2.5}{\ignorespaces Simulation Result of 1 dimensional FDTD in free space with Perfect magnetic conductor boundary}}{10}{figure.caption.12}
-\contentsline {figure}{\numberline {2.6}{\ignorespaces Simulation Result of 1 dimensional FDTD after passing through denser medium}}{11}{figure.caption.13}
-\contentsline {figure}{\numberline {2.7}{\ignorespaces Frequency Spectrum of 1D denser medium slab}}{12}{figure.caption.14}
-\contentsline {figure}{\numberline {2.8}{\ignorespaces Refractive index of different frequencies after passing through denser medium}}{13}{figure.caption.15}
-\contentsline {figure}{\numberline {2.9}{\ignorespaces Permittivity in Drudes model for different frequencies}}{15}{figure.caption.16}
-\contentsline {figure}{\numberline {2.10}{\ignorespaces Gaussian Pulse after Passing through DNG slab}}{17}{figure.caption.17}
-\contentsline {figure}{\numberline {2.11}{\ignorespaces Reflected and Transmitted wave's Frequency Spectrum for 1D DNG simulation}}{18}{figure.caption.18}
-\contentsline {figure}{\numberline {2.12}{\ignorespaces Refractive Index vs Frequency for 1D DNG slab}}{18}{figure.caption.19}
-\contentsline {figure}{\numberline {2.13}{\ignorespaces Sinusoidal wave passing through DNG slab}}{19}{figure.caption.20}
-\contentsline {figure}{\numberline {2.14}{\ignorespaces OpenCL basic run}}{24}{figure.caption.21}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces FDTD update equations}}{6}{figure.caption.7}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces 1 dimensional FDTD Space}}{7}{figure.caption.8}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces 1 dimensional FDTD Space assumed with integer indices}}{8}{figure.caption.9}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Simulation Result of 1 dimensional FDTD in free space}}{9}{figure.caption.10}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces Simulation Result of 1 dimensional FDTD in free space with Perfect magnetic conductor boundary}}{10}{figure.caption.11}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces Simulation Result of 1 dimensional FDTD after passing through denser medium}}{11}{figure.caption.12}
+\contentsline {figure}{\numberline {2.7}{\ignorespaces Frequency Spectrum of 1D denser medium slab}}{12}{figure.caption.13}
+\contentsline {figure}{\numberline {2.8}{\ignorespaces Refractive index of different frequencies after passing through denser medium}}{13}{figure.caption.14}
+\contentsline {figure}{\numberline {2.9}{\ignorespaces Permittivity in Drudes model for different frequencies}}{15}{figure.caption.15}
+\contentsline {figure}{\numberline {2.10}{\ignorespaces Gaussian Pulse after Passing through DNG slab}}{17}{figure.caption.16}
+\contentsline {figure}{\numberline {2.11}{\ignorespaces Reflected and Transmitted wave's Frequency Spectrum for 1D DNG simulation}}{18}{figure.caption.17}
+\contentsline {figure}{\numberline {2.12}{\ignorespaces Refractive Index vs Frequency for 1D DNG slab}}{18}{figure.caption.18}
+\contentsline {figure}{\numberline {2.13}{\ignorespaces Sinusoidal wave passing through DNG slab}}{19}{figure.caption.19}
+\contentsline {figure}{\numberline {2.14}{\ignorespaces OpenCL basic run}}{24}{figure.caption.20}
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces Computational Time on different platforms}}{28}{figure.caption.22}
-\contentsline {figure}{\numberline {3.2}{\ignorespaces Computational Time on different platforms 2}}{28}{figure.caption.23}
-\contentsline {figure}{\numberline {3.3}{\ignorespaces Performance Comparison on log scale}}{29}{figure.caption.24}
+\contentsline {figure}{\numberline {3.1}{\ignorespaces Computational Time on different platforms}}{28}{figure.caption.21}
+\contentsline {figure}{\numberline {3.2}{\ignorespaces Computational Time on different platforms 2}}{28}{figure.caption.22}
+\contentsline {figure}{\numberline {3.3}{\ignorespaces Performance Comparison on log scale}}{29}{figure.caption.23}
+\addvspace {10\p@ }
 \addvspace {10\p@ }
