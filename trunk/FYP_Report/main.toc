@@ -14,40 +14,40 @@
 \contentsline {section}{\numberline {2.1}Modeling of a denser slab}{5}{section.2.1}
 \contentsline {subsection}{\numberline {2.1.1}Finite Difference Time Domain (FDTD) technique}{5}{subsection.2.1.1}
 \contentsline {subsection}{\numberline {2.1.2}The Yee Algorithm}{6}{subsection.2.1.2}
-\contentsline {subsection}{\numberline {2.1.3}One-Dimensional FDTD simulation}{7}{subsection.2.1.3}
-\contentsline {subsection}{\numberline {2.1.4}Boundary Conditions}{8}{subsection.2.1.4}
+\contentsline {subsection}{\numberline {2.1.3}One-Dimensional FDTD simulation}{8}{subsection.2.1.3}
+\contentsline {subsection}{\numberline {2.1.4}Boundary Conditions}{9}{subsection.2.1.4}
 \contentsline {subsubsection}{\numberline {2.1.4.1}Perfect Conductor Boundary}{9}{subsubsection.2.1.4.1}
-\contentsline {subsubsection}{\numberline {2.1.4.2}Absorbing Boundary Conditions}{9}{subsubsection.2.1.4.2}
-\contentsline {subsection}{\numberline {2.1.5}Simulation Results}{11}{subsection.2.1.5}
-\contentsline {subsubsection}{\numberline {2.1.5.1}Simulation Parameters}{11}{subsubsection.2.1.5.1}
+\contentsline {subsubsection}{\numberline {2.1.4.2}Absorbing Boundary Conditions}{10}{subsubsection.2.1.4.2}
+\contentsline {subsection}{\numberline {2.1.5}Simulation Results}{12}{subsection.2.1.5}
+\contentsline {subsubsection}{\numberline {2.1.5.1}Simulation Parameters}{12}{subsubsection.2.1.5.1}
 \contentsline {subsubsection}{\numberline {2.1.5.2}Frequency Domain Analysis}{12}{subsubsection.2.1.5.2}
 \contentsline {section}{\numberline {2.2}Modeling of NIM slab }{13}{section.2.2}
 \contentsline {subsection}{\numberline {2.2.1}Limitation of FDTD}{13}{subsection.2.2.1}
 \contentsline {subsection}{\numberline {2.2.2}The Drudes Model}{14}{subsection.2.2.2}
-\contentsline {subsubsection}{\numberline {2.2.2.1}Drudes Algorithm}{14}{subsubsection.2.2.2.1}
-\contentsline {subsection}{\numberline {2.2.3}Simulation of 1D DNG Slab}{15}{subsection.2.2.3}
-\contentsline {subsubsection}{\numberline {2.2.3.1}Problem Specification}{15}{subsubsection.2.2.3.1}
-\contentsline {subsubsection}{\numberline {2.2.3.2}Simulation Parameters}{16}{subsubsection.2.2.3.2}
-\contentsline {subsection}{\numberline {2.2.4}Simulation Results}{16}{subsection.2.2.4}
-\contentsline {section}{\numberline {2.3}Implementation in C++}{19}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}File handling in c++}{20}{subsection.2.3.1}
-\contentsline {section}{\numberline {2.4}Implementation on GPU }{22}{section.2.4}
-\contentsline {subsection}{\numberline {2.4.1}OpenCL}{22}{subsection.2.4.1}
-\contentsline {subsection}{\numberline {2.4.2}OpenCL Program Flow}{22}{subsection.2.4.2}
-\contentsline {subsubsection}{\numberline {2.4.2.1}Kernel}{22}{subsubsection.2.4.2.1}
-\contentsline {subsubsection}{\numberline {2.4.2.2}Host Program}{23}{subsubsection.2.4.2.2}
-\contentsline {subsection}{\numberline {2.4.3}Challenges in GPU programming}{24}{subsection.2.4.3}
-\contentsline {subsubsection}{\numberline {2.4.3.1}Read Delay}{25}{subsubsection.2.4.3.1}
-\contentsline {subsubsection}{\numberline {2.4.3.2}Kernel synchronization}{26}{subsubsection.2.4.3.2}
-\contentsline {chapter}{\numberline {3}Performance Analysis and Comparison}{27}{chapter.3}
-\contentsline {section}{\numberline {3.1}Computational time comparison}{27}{section.3.1}
-\contentsline {section}{\numberline {3.2}Analysis }{27}{section.3.2}
-\contentsline {section}{\numberline {3.3}Conclusion and Future Work}{30}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Conclusion }{30}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Future Work }{30}{subsection.3.3.2}
+\contentsline {subsubsection}{\numberline {2.2.2.1}Drudes Algorithm}{16}{subsubsection.2.2.2.1}
+\contentsline {subsection}{\numberline {2.2.3}Simulation of 1D DNG Slab}{16}{subsection.2.2.3}
+\contentsline {subsubsection}{\numberline {2.2.3.1}Problem Specification}{16}{subsubsection.2.2.3.1}
+\contentsline {subsubsection}{\numberline {2.2.3.2}Simulation Parameters}{17}{subsubsection.2.2.3.2}
+\contentsline {subsection}{\numberline {2.2.4}Simulation Results}{17}{subsection.2.2.4}
+\contentsline {section}{\numberline {2.3}Implementation in C++}{21}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}File handling in c++}{21}{subsection.2.3.1}
+\contentsline {section}{\numberline {2.4}Implementation on GPU }{24}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}OpenCL}{24}{subsection.2.4.1}
+\contentsline {subsection}{\numberline {2.4.2}OpenCL Program Flow}{24}{subsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.2.1}Kernel}{24}{subsubsection.2.4.2.1}
+\contentsline {subsubsection}{\numberline {2.4.2.2}Host Program}{25}{subsubsection.2.4.2.2}
+\contentsline {subsection}{\numberline {2.4.3}Challenges in GPU programming}{27}{subsection.2.4.3}
+\contentsline {subsubsection}{\numberline {2.4.3.1}Read Delay}{27}{subsubsection.2.4.3.1}
+\contentsline {subsubsection}{\numberline {2.4.3.2}Kernel synchronization}{28}{subsubsection.2.4.3.2}
+\contentsline {chapter}{\numberline {3}Performance Analysis and Comparison}{29}{chapter.3}
+\contentsline {section}{\numberline {3.1}Computational time comparison}{29}{section.3.1}
+\contentsline {section}{\numberline {3.2}Analysis }{29}{section.3.2}
+\contentsline {section}{\numberline {3.3}Conclusion and Future Work}{32}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Conclusion }{32}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Future Work }{32}{subsection.3.3.2}
 \vspace {2em}
-\contentsline {chapter}{\numberline {A}Program codes}{31}{appendix.A}
-\contentsline {chapter}{\numberline {B}Platforms Details}{61}{appendix.B}
+\contentsline {chapter}{\numberline {A}Program codes}{33}{appendix.A}
+\contentsline {chapter}{\numberline {B}Platforms Details}{67}{appendix.B}
 \vspace {2em}
-\contentsline {chapter}{Bibliography}{63}{dummy.7}
-\contentsline {chapter}{Index}{65}{dummy.8}
+\contentsline {chapter}{Bibliography}{69}{dummy.7}
+\contentsline {chapter}{Index}{71}{dummy.8}

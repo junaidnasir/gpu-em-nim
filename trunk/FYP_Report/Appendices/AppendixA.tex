@@ -61,6 +61,7 @@ delx=299792458;
 maxTime = 1001;
 mm=0;
 temp=0;
+
     for qTime = 1:(maxTime-1)
 %        Update Magnetic field
         for  mm = 1:(SIZE - 2)
@@ -218,6 +219,8 @@ for medium= 1:2
     else
         epsilon=[8.8542e-012*ones(1,SIZE-500) 1.7708e-011*ones(1,500)]; % half medium
     end
+
+
     for qTime = 1:(maxTime-1)
 %        Update Magnetic field
     	for  mm = 1:(SIZE-1)
@@ -273,6 +276,9 @@ for medium= 1:2
         Etransmitted=Etemp;
     end
 end
+
+
+
 % Frequency Domain Analysis
 Fs=1/delt;   %Sampling Frequency
 T=1/Fs;      %Sample Time
