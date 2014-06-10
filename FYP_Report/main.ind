@@ -1,10 +1,10 @@
 \begin{theindex}
 
-  \item ABC, \hyperpage{9}
+  \item ABC, \hyperpage{10}
 
   \indexspace
 
-  \item C++ implementation, \hyperpage{19}
+  \item C++ implementation, \hyperpage{21}
 
   \indexspace
 
@@ -13,19 +13,19 @@
   \indexspace
 
   \item FDTD Frequency Analysis, \hyperpage{12}
-  \item File handling dynamic, \hyperpage{20}
+  \item File handling dynamic, \hyperpage{21}
   \item Finite Difference Time Domain (FDTD) technique, \hyperpage{5}
 
   \indexspace
 
-  \item GPU, \hyperpage{22}
-  \item Grid truncation, \hyperpage{8}
+  \item GPU, \hyperpage{24}
+  \item Grid truncation, \hyperpage{9}
 
   \indexspace
 
   \item Kane Yee, \hyperpage{6}
-  \item Kernel function, \hyperpage{22}
-  \item Kernel synchronization, \hyperpage{26}
+  \item Kernel function, \hyperpage{24}
+  \item Kernel synchronization, \hyperpage{28}
 
   \indexspace
 
@@ -33,11 +33,11 @@
 
   \indexspace
 
-  \item OpenCL, \hyperpage{22}
+  \item OpenCL, \hyperpage{24}
 
   \indexspace
 
-  \item Performance comparison results, GPU C++ Matlab, \hyperpage{27}
+  \item Performance comparison results, GPU C++ Matlab, \hyperpage{29}
   \item Problem statement, \hyperpage{2}
 
 \end{theindex}
